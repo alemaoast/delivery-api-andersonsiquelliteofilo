@@ -39,5 +39,5 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 
 ## 👨‍💻 Desenvolvedor
 
-[Seu Nome] - [Sua Turma]  
+[Anderson S.T.] - [SDE - TI 28 - ARQUITETURA DE SISTEMAS (NOITE) 02459 19h00 às 20h00]  
 Desenvolvido com JDK 21 e Spring Boot 3.4.7
