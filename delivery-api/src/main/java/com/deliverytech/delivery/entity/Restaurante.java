@@ -2,14 +2,21 @@ package com.deliverytech.delivery.entity;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "restaurantes")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "restaurantes")
 public class Restaurante {
 
     @Id
@@ -27,70 +34,4 @@ public class Restaurante {
     private BigDecimal avaliacao;
 
     private Boolean ativo;
-
-       // Getters e Setters
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public BigDecimal getTaxaEntrega() {
-        return taxaEntrega;
-    }
-
-    public void setTaxaEntrega(BigDecimal taxaEntrega) {
-        this.taxaEntrega = taxaEntrega;
-    }
-
-    public BigDecimal getAvaliacao() {
-        return avaliacao;
-    }
-
-    public void setAvaliacao(BigDecimal avaliacao) {
-        this.avaliacao = avaliacao;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
 }
