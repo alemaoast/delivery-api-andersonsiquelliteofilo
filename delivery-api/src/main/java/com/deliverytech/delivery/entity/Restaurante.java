@@ -2,6 +2,8 @@ package com.deliverytech.delivery.entity;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +23,7 @@ public class Restaurante {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String nome;
     private String categoria;
@@ -34,4 +36,9 @@ public class Restaurante {
     private BigDecimal avaliacao;
 
     private Boolean ativo;
+
+    @JsonIgnore
+    public void inativar() {
+        this.ativo = false;
+    }
 }

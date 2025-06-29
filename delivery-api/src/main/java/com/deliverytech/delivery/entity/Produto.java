@@ -1,6 +1,7 @@
 package com.deliverytech.delivery.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +27,7 @@ public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String nome;
 
@@ -41,8 +42,8 @@ public class Produto {
     @ManyToOne
     @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
-    
-    @JsonIgnore
+
     @OneToMany(mappedBy = "produto")
-    private List<ItemPedido> itens;
+    @JsonIgnore
+    private List<ItemPedido> itens = new ArrayList<>();
 }

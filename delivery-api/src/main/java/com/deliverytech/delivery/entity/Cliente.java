@@ -43,4 +43,9 @@ public class Cliente {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos;
+
+    @JsonIgnore
+    public void inativar() {
+        this.ativo = false;
+    }
 }
