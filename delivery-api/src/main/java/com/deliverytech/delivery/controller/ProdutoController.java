@@ -3,68 +3,86 @@ package com.deliverytech.delivery.controller;
 import com.deliverytech.delivery.entity.Produto;
 import com.deliverytech.delivery.service.ProdutoService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/produtos")
+@CrossOrigin(origins = "*")
 public class ProdutoController {
 
-    private final ProdutoService service;
+    @Autowired
+    private ProdutoService produtoService;
 
-    public ProdutoController(ProdutoService service) {
-        this.service = service;
-    }
-
-    @GetMapping
-    public List<Produto> listarTodos() {
-        return service.listarTodos();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarPorId(@PathVariable Integer id) {
-        Optional<Produto> produto = service.buscarPorId(id);
-        return produto.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/restaurante/{restauranteId}")
-    public List<Produto> listarPorRestaurante(@PathVariable Integer restauranteId) {
-        return service.listarPorRestaurante(restauranteId);
-    }
-
-    @GetMapping("/categoria")
-    public List<Produto> listarPorCategoria(@RequestParam String categoria) {
-        return service.listarPorCategoria(categoria);
-    }
-
-    @GetMapping("/disponivel")
-    public List<Produto> listarPorDisponivel(@RequestParam Boolean disponivel) {
-        return service.listarPorDisponivel(disponivel);
-    }
-
+    /*
+     * Cadastrar novo produto
+     */
     @PostMapping
-    public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto) {
-        Produto salvo = service.salvar(produto);
-        return ResponseEntity.ok(salvo);
+    public ResponseEntity<Produto> cadastrar(@RequestBody Produto produto) {
+        Produto produtoSalvo = produtoService.cadastrar(produto);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(produtoSalvo.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(produtoSalvo);
     }
 
+    /*
+     * Buscar produto por ID
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
+        return produtoService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /*
+     * Buscar produtos por restaurante ID
+     */
+    @GetMapping("/restaurante/{restauranteId}")
+    public ResponseEntity<List<Produto>> buscarPorRestaurante(@PathVariable Long restauranteId) {
+        return ResponseEntity.ok(produtoService.buscarPorRestauranteId(restauranteId));
+    }
+
+    /*
+     * Buscar produtos disponiveis por restaurante ID
+     */
+    @GetMapping("/restaurante/{restauranteId}/disponiveis")
+    public ResponseEntity<List<Produto>> listarDisponiveisPorRestaurante(@PathVariable Long restauranteId) {
+        return ResponseEntity.ok(produtoService.listarDisponiveisPorRestaurante(restauranteId));
+    }
+
+    /*
+     * Buscar produtos por categoria
+     */
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<List<Produto>> buscarPorCategoria(@PathVariable String categoria) {
+        return ResponseEntity.ok(produtoService.buscarPorCategoria(categoria));
+    }
+
+    /*
+     * Atualizar produto
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizarProduto(@PathVariable Integer id, @RequestBody Produto novoProduto) {
-        try {
-            Produto atualizado = service.atualizar(id, novoProduto);
-            return ResponseEntity.ok(atualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody Produto novoProduto) {
+        return ResponseEntity.ok(produtoService.atualizar(id, novoProduto));
     }
 
+    /*
+     * Deletar produto
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProduto(@PathVariable Integer id) {
-        service.excluir(id);
+    public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
+        produtoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 }
