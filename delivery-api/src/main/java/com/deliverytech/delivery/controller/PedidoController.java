@@ -3,68 +3,58 @@ package com.deliverytech.delivery.controller;
 import com.deliverytech.delivery.entity.Pedido;
 import com.deliverytech.delivery.service.PedidoService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/pedidos")
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
-    private final PedidoService service;
+    @Autowired
+    private PedidoService pedidoService;
 
-    public PedidoController(PedidoService service) {
-        this.service = service;
-    }
-
-    @GetMapping
-    public List<Pedido> listarTodos() {
-        return service.listarTodos();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Pedido> buscarPorId(@PathVariable Integer id) {
-        Optional<Pedido> pedido = service.buscarPorId(id);
-        return pedido.map(ResponseEntity::ok)
-                     .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
+    /*
+     * Cadastra um novo pedido
+     */
     @PostMapping
-    public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
-        Pedido salvo = service.salvar(pedido);
-        return ResponseEntity.ok(salvo);
+    public ResponseEntity<Pedido> cadastrar(@RequestBody Pedido pedido) {
+        Pedido pedidoSalvo = pedidoService.cadastrar(pedido);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(pedidoSalvo.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(pedidoSalvo);
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Integer id, @RequestParam String status) {
-        try {
-            Pedido atualizado = service.atualizarStatus(id, status);
-            return ResponseEntity.ok(atualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        service.excluir(id);
-        return ResponseEntity.noContent().build();
-    }
-
+    /*
+     * Busca um pedido pelo ID do cliente
+     */
     @GetMapping("/cliente/{clienteId}")
-    public List<Pedido> buscarPorClienteId(@PathVariable Long clienteId) {
-        return service.buscarPorClienteId(clienteId);
+    public ResponseEntity<List<Pedido>> buscarPorClienteId(@PathVariable Long clienteId,
+            @RequestParam(defaultValue = "TODOS") String status,
+            @RequestParam(defaultValue = "1900-01-01T00:00:00") LocalDateTime dataInicio,
+            @RequestParam(defaultValue = "2100-01-01T00:00:00") LocalDateTime dataFim) {
+
+        return ResponseEntity
+                .ok(pedidoService.buscarPorClienteId(clienteId, status.toUpperCase(), dataInicio, dataFim));
     }
 
-    @GetMapping("/status")
-    public List<Pedido> listarPorStatus(@RequestParam String status) {
-        return service.listarPorStatus(status);
-    }
-
-    @GetMapping("/relatorio/total-gasto")
-    public List<Object[]> totalGastoPorCliente() {
-        return service.totalGastoPorCliente();
+    /*
+     * Atualiza o status de um pedido
+     */
+    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
+    @PatchMapping("/{id}")
+    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestParam String status) {
+        return ResponseEntity.ok(pedidoService.atualizarStatus(id, status));
     }
 }
