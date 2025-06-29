@@ -9,11 +9,17 @@ import org.springframework.stereotype.Repository;
 import com.deliverytech.delivery.entity.Cliente;
 
 @Repository
-public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
+public interface ClienteRepository extends JpaRepository<Cliente, Long>{
 
     // Buscar clientes por e-mail
     Optional<Cliente> findByEmail(String email);
 
+    // Verificar se email já existe
+    boolean existsByEmailAndAtivoTrue(String email);
+
     // Buscar clientes por status ativo 
-    List<Cliente> findByAtivo(Boolean ativo);
+    List<Cliente> findByAtivoTrue();
+
+    // Buscar clientes por nome (contendo)
+    List<Cliente> findByNomeContainingIgnoreCase(String nome);
 }
