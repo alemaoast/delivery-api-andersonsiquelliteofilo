@@ -1,9 +1,12 @@
 package com.deliverytech.delivery.service;
 
 import com.deliverytech.delivery.entity.Restaurante;
+import com.deliverytech.delivery.exception.ResourceNotFoundException;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,50 +14,119 @@ import java.util.Optional;
 @Service
 public class RestauranteService {
 
-    private final RestauranteRepository repository;
+    @Autowired
+    private RestauranteRepository restauranteRepository;
 
-    public RestauranteService(RestauranteRepository repository) {
-        this.repository = repository;
+    /*
+     * Cadastrar novo restaurante
+     */
+    public Restaurante cadastrar(Restaurante restaurante) {
+
+        // Validações de negócio
+        validarDadosRestaurante(restaurante);
+
+        restaurante.setAtivo(true);
+
+        return restauranteRepository.save(restaurante);
     }
 
+    /*
+     * Buscar restaurante por ID
+     */
+    @Transactional(readOnly = true)
+    public Optional<Restaurante> buscarPorId(Long id) {
+        return restauranteRepository.findById(id);
+    }
+
+    /*
+     * Buscar restaurante por nome
+     */
+    @Transactional(readOnly = true)
     public List<Restaurante> buscarPorNome(String nome) {
-        return repository.findByNome(nome);
+        return restauranteRepository.findByNomeContainingIgnoreCase(nome);
     }
 
-    public List<Restaurante> buscarPorAtivo() {
-        return repository.findByAtivo();
-    }
-
+    /*
+     * Buscar restaurante por categoria
+     */
+    @Transactional(readOnly = true)
     public List<Restaurante> buscarPorCategoria(String categoria) {
-        return repository.findByCategoria(categoria);
+        return restauranteRepository.findByCategoriaContainingIgnoreCase(categoria);
     }
 
-    public List<Restaurante> listarTodos() {
-        return repository.findAll();
+    /*
+     * Listar todos os restaurantes ativos
+     */
+    @Transactional(readOnly = true)
+    public List<Restaurante> listarTodosAtivos() {
+        return restauranteRepository.findByAtivoTrue();
     }
 
-    public Optional<Restaurante> buscarPorId(Integer id) {
-        return repository.findById(id);
+    /*
+     * Atualizar dados restaurantes
+     */
+    public Restaurante atualizar(Long id, Restaurante restauranteNovo) {
+
+        // Validações de negócio
+        validarDadosRestaurante(restauranteNovo);
+
+        Restaurante restaurante = buscarPorId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado", "id", id.toString()));
+
+        restaurante.setNome(restauranteNovo.getNome());
+        restaurante.setCategoria(restauranteNovo.getCategoria());
+        restaurante.setEndereco(restauranteNovo.getEndereco());
+        restaurante.setTelefone(restauranteNovo.getTelefone());
+        restaurante.setTaxaEntrega(restauranteNovo.getTaxaEntrega());
+        restaurante.setAvaliacao(restauranteNovo.getAvaliacao());
+
+        return restauranteRepository.save(restaurante);
     }
 
-    public Restaurante salvar(Restaurante restaurante) {
-        return repository.save(restaurante);
+    /*
+     * Inativar restaurante (soft delete)
+     */
+    public void inativar(Long id) {
+        Restaurante restaurante = buscarPorId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado", "id", id.toString()));
+
+        restaurante.inativar();
+
+        restauranteRepository.save(restaurante);
     }
 
-    public Restaurante atualizar(Integer id, Restaurante novo) {
-        return repository.findById(id).map(r -> {
-            r.setNome(novo.getNome());
-            r.setCategoria(novo.getCategoria());
-            r.setEndereco(novo.getEndereco());
-            r.setTelefone(novo.getTelefone());
-            r.setTaxaEntrega(novo.getTaxaEntrega());
-            r.setAvaliacao(novo.getAvaliacao());
-            r.setAtivo(novo.getAtivo());
-            return repository.save(r);
-        }).orElseThrow(() -> new RuntimeException("Restaurante não encontrado"));
+    /*
+     * Atualizar status do restaurante (ativo/inativo)
+     */
+    public void atualizarStatus(Long id, boolean ativo) {
+
+        Restaurante restaurante = buscarPorId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado", "id", id.toString()));
+
+        restaurante.setAtivo(ativo);
+
+        restauranteRepository.save(restaurante);
     }
 
-    public void excluir(Integer id) {
-        repository.deleteById(id);
+    /**
+     * Validações de negócio
+     */
+    private void validarDadosRestaurante(Restaurante restaurante) {
+
+        if (restaurante.getNome() == null || restaurante.getNome().isBlank()) {
+            throw new IllegalArgumentException("Nome é obrigatório");
+        }
+
+        if (restaurante.getCategoria() == null || restaurante.getCategoria().isBlank()) {
+            throw new IllegalArgumentException("Categoria é obrigatória");
+        }
+
+        if (restaurante.getEndereco() == null || restaurante.getEndereco().isBlank()) {
+            throw new IllegalArgumentException("Endereço é obrigatório");
+        }
+
+        if (restaurante.getTelefone() == null || restaurante.getTelefone().isBlank()) {
+            throw new IllegalArgumentException("Telefone é obrigatório");
+        }
     }
 }
