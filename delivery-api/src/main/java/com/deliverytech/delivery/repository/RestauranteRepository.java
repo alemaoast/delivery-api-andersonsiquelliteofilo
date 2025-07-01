@@ -1,5 +1,6 @@
 package com.deliverytech.delivery.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,10 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
     // Buscar restaurante por ativos, ordenação por avaliação
     @Query("SELECT r FROM Restaurante r WHERE r.ativo = true ORDER BY r.avaliacao DESC")
     List<Restaurante> findByAtivoTrue();
+
+    // Buscar restaurante por taxa de entrega menor ou igual a um valor específico
+    List<Restaurante> findByTaxaEntregaLessThanEqual(BigDecimal taxa);
+
+    // Buscar os 5 primeiros restaurantes ordenados por nome
+    List<Restaurante> findTop5ByOrderByNomeAsc();
 }
