@@ -3,6 +3,8 @@ package com.deliverytech.delivery.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.deliverytech.delivery.enums.StatusPedido;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -39,7 +42,8 @@ public class Pedido {
     @Column(name = "data_pedido")
     private LocalDateTime dataPedido;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusPedido status;
 
     @Column(name = "valor_total")
     private BigDecimal valorTotal;

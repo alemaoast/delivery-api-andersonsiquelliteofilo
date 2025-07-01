@@ -5,6 +5,7 @@ import com.deliverytech.delivery.entity.ItemPedido;
 import com.deliverytech.delivery.entity.Pedido;
 import com.deliverytech.delivery.entity.Produto;
 import com.deliverytech.delivery.entity.Restaurante;
+import com.deliverytech.delivery.enums.StatusPedido;
 import com.deliverytech.delivery.exception.ResourceNotFoundException;
 import com.deliverytech.delivery.repository.PedidoRepository;
 
@@ -84,7 +85,7 @@ public class PedidoService {
         pedido.setItens(itens);
         pedido.setValorTotal(valorTotal);
         pedido.setDataPedido(LocalDateTime.now());
-        pedido.setStatus("PENDENTE");
+        pedido.setStatus(StatusPedido.PENDENTE);
 
         return pedidoRepository.save(pedido);
     }
@@ -124,7 +125,7 @@ public class PedidoService {
         Pedido pedido = buscarPorId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado", "id", id.toString()));
 
-        pedido.setStatus(novoStatus.toUpperCase());
+        pedido.setStatus(StatusPedido.valueOf(novoStatus.toUpperCase()));
 
         return pedidoRepository.save(pedido);
     }
