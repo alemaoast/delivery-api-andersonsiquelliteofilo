@@ -1,5 +1,6 @@
 package com.deliverytech.delivery.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,10 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     // Buscar produtos disponiveis por restaurante
     List<Produto> findByDisponivelTrueAndRestauranteId(Long restauranteId);
+
+    // Buscar produtos disponiveis
+    List<Produto> findByDisponivelTrue();
+
+    // Buscar produtos por preço menor ou igual a um valor especificado
+    List<Produto> findByPrecoLessThanEqual(BigDecimal preco);
 }
