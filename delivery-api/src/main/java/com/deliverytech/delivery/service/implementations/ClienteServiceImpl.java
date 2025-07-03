@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.service;
+package com.deliverytech.delivery.service.implementations;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
 import com.deliverytech.delivery.entity.Cliente;
 import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.repository.ClienteRepository;
+import com.deliverytech.delivery.service.interfaces.ClienteService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ClienteService {
+public class ClienteServiceImpl implements ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -29,6 +30,7 @@ public class ClienteService {
     /**
      * Cadastrar novo cliente
      */
+    @Override
     public ClienteResponseDTO cadastrar(ClienteRequestDTO clienteCadastrar) {
 
         // Validar email único
@@ -47,6 +49,7 @@ public class ClienteService {
     /**
      * Buscar cliente por ID
      */
+    @Override
     @Transactional(readOnly = true)
     public ClienteResponseDTO buscarPorId(Long id) {
 
@@ -59,6 +62,7 @@ public class ClienteService {
     /**
      * Buscar cliente por nome
      */
+    @Override
     @Transactional(readOnly = true)
     public List<ClienteResponseDTO> buscarPorNome(String nome) {
         List<Cliente> cliente = clienteRepository.findByNomeContainingIgnoreCase(nome);
@@ -71,6 +75,7 @@ public class ClienteService {
     /**
      * Buscar cliente por email
      */
+    @Override
     @Transactional(readOnly = true)
     public ClienteResponseDTO buscarPorEmail(String email) {
 
@@ -83,6 +88,7 @@ public class ClienteService {
     /**
      * Listar todos os clientes ativos
      */
+    @Override
     @Transactional(readOnly = true)
     public List<ClienteResponseDTO> listarTodosAtivos() {
         return clienteRepository.findByAtivoTrue()
@@ -94,6 +100,7 @@ public class ClienteService {
     /**
      * Atualizar dados do cliente
      */
+    @Override
     public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO clienteAtualizado) {
 
         Cliente cliente = clienteRepository.findById(id)
@@ -118,6 +125,7 @@ public class ClienteService {
     /**
      * Inativar cliente (soft delete)
      */
+    @Override
     public void inativar(Long id) {
 
         Cliente cliente = clienteRepository.findById(id)
@@ -130,7 +138,8 @@ public class ClienteService {
     /**
      * Ativar desativar cliente
      */
-    public ClienteResponseDTO ativarDesativarCliente(Long id) {
+    @Override
+    public ClienteResponseDTO ativarDesativar(Long id) {
 
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
 import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
-import com.deliverytech.delivery.service.ClienteService;
+import com.deliverytech.delivery.service.interfaces.ClienteService;
 
 import jakarta.validation.Valid;
 
@@ -78,7 +78,7 @@ public class ClienteController {
     @PatchMapping("/{id}/status")
     @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
     public ResponseEntity<ClienteResponseDTO> atualizarStatus(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.ativarDesativarCliente(id));
+        return ResponseEntity.ok(clienteService.ativarDesativar(id));
     }
 
     /**
