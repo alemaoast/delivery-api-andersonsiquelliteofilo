@@ -5,8 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.deliverytech.delivery.entity.Cliente;
+import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
+import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
 import com.deliverytech.delivery.service.ClienteService;
+
+import jakarta.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
@@ -23,8 +26,8 @@ public class ClienteController {
      * Cadastrar novo cliente
      */
     @PostMapping
-    public ResponseEntity<Cliente> cadastrar(@RequestBody Cliente cliente) {
-        Cliente clienteSalvo = clienteService.cadastrar(cliente);
+    public ResponseEntity<ClienteResponseDTO> cadastrar(@RequestBody @Valid ClienteRequestDTO cliente) {
+        ClienteResponseDTO clienteSalvo = clienteService.cadastrar(cliente);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,7 +42,7 @@ public class ClienteController {
      * Listar todos os clientes ativos
      */
     @GetMapping
-    public ResponseEntity<List<Cliente>> listar() {
+    public ResponseEntity<List<ClienteResponseDTO>> listar() {
         return ResponseEntity.ok(clienteService.listarTodosAtivos());
     }
 
@@ -47,17 +50,16 @@ public class ClienteController {
      * Buscar cliente por ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
-        return clienteService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
     /**
      * Atualizar cliente
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id,
+            @RequestBody @Valid ClienteRequestDTO cliente) {
         return ResponseEntity.ok(clienteService.atualizar(id, cliente));
     }
 
@@ -70,11 +72,20 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
+    /*
+     * Ativar desativar cliente (toggle)
+     */
+    @PatchMapping("/{id}/status")
+    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
+    public ResponseEntity<ClienteResponseDTO> atualizarStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.ativarDesativarCliente(id));
+    }
+
     /**
      * Buscar clientes por nome
      */
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Cliente>> buscarPorNome(@PathVariable String nome) {
+    public ResponseEntity<List<ClienteResponseDTO>> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(clienteService.buscarPorNome(nome));
     }
 
@@ -82,9 +93,7 @@ public class ClienteController {
      * Buscar cliente por email
      */
     @GetMapping("/email/{email}")
-    public ResponseEntity<Cliente> buscarPorEmail(@PathVariable String email) {
-        return clienteService.buscarPorEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ClienteResponseDTO> buscarPorEmail(@PathVariable String email) {
+        return ResponseEntity.ok(clienteService.buscarPorEmail(email));
     }
 }

@@ -6,8 +6,12 @@ import com.deliverytech.delivery.entity.Pedido;
 import com.deliverytech.delivery.entity.Produto;
 import com.deliverytech.delivery.entity.Restaurante;
 import com.deliverytech.delivery.enums.StatusPedido;
+import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.exception.ResourceNotFoundException;
+import com.deliverytech.delivery.repository.ClienteRepository;
 import com.deliverytech.delivery.repository.PedidoRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +30,7 @@ public class PedidoService {
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    private ClienteService clienteService;
+    private ClienteRepository clienteRepository;
 
     @Autowired
     private RestauranteService restauranteService;
@@ -43,9 +47,8 @@ public class PedidoService {
         // Validações de negócio
         validarDadosPedido(pedido);
 
-        Cliente cliente = clienteService.buscarPorId(pedido.getCliente().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado", "id",
-                        pedido.getCliente().getId().toString()));
+        Cliente cliente = clienteRepository.findById(pedido.getCliente().getId())
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
 
         if (cliente.getAtivo() == false) {
             throw new IllegalArgumentException("Cliente inativo, não é possível realizar pedidos");
