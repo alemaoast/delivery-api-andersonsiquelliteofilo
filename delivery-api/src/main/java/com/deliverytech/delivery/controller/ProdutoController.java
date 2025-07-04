@@ -1,7 +1,10 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.entity.Produto;
-import com.deliverytech.delivery.service.ProdutoService;
+import com.deliverytech.delivery.dto.produto.ProdutoRequestDTO;
+import com.deliverytech.delivery.dto.produto.ProdutoResponseDTO;
+import com.deliverytech.delivery.service.implementations.ProdutoServiceImpl;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +20,14 @@ import java.util.List;
 public class ProdutoController {
 
     @Autowired
-    private ProdutoService produtoService;
+    private ProdutoServiceImpl produtoService;
 
     /*
      * Cadastrar novo produto
      */
     @PostMapping
-    public ResponseEntity<Produto> cadastrar(@RequestBody Produto produto) {
-        Produto produtoSalvo = produtoService.cadastrar(produto);
+    public ResponseEntity<ProdutoResponseDTO> cadastrar(@RequestBody @Valid ProdutoRequestDTO dto) {
+        ProdutoResponseDTO produtoSalvo = produtoService.cadastrar(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,33 +42,23 @@ public class ProdutoController {
      * Buscar produto por ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
-        return produtoService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
     /*
      * Buscar produtos por restaurante ID
      */
     @GetMapping("/restaurante/{restauranteId}")
-    public ResponseEntity<List<Produto>> buscarPorRestaurante(@PathVariable Long restauranteId) {
-        return ResponseEntity.ok(produtoService.buscarPorRestauranteId(restauranteId));
-    }
-
-    /*
-     * Buscar produtos disponiveis por restaurante ID
-     */
-    @GetMapping("/restaurante/{restauranteId}/disponiveis")
-    public ResponseEntity<List<Produto>> listarDisponiveisPorRestaurante(@PathVariable Long restauranteId) {
-        return ResponseEntity.ok(produtoService.listarDisponiveisPorRestaurante(restauranteId));
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorRestaurante(@PathVariable Long restauranteId) {
+        return ResponseEntity.ok(produtoService.buscarPorRestaurante(restauranteId));
     }
 
     /*
      * Buscar produtos por categoria
      */
     @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<Produto>> buscarPorCategoria(@PathVariable String categoria) {
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorCategoria(@PathVariable String categoria) {
         return ResponseEntity.ok(produtoService.buscarPorCategoria(categoria));
     }
 
@@ -73,16 +66,18 @@ public class ProdutoController {
      * Atualizar produto
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody Produto novoProduto) {
-        return ResponseEntity.ok(produtoService.atualizar(id, novoProduto));
+    public ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable Long id,
+            @RequestBody @Valid ProdutoRequestDTO dto) {
+        return ResponseEntity.ok(produtoService.atualizar(id, dto));
     }
 
     /*
      * Deletar produto
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
-        produtoService.excluir(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/{id}/disponibilidade")
+    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
+    public ResponseEntity<ProdutoResponseDTO> alterarDisponibilidade(@PathVariable Long id,
+            @RequestParam boolean disponibilidade) {
+        return ResponseEntity.ok(produtoService.alterarDisponibilidade(id, disponibilidade));
     }
 }
