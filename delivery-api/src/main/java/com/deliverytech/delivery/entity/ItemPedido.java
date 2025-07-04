@@ -43,4 +43,13 @@ public class ItemPedido {
     @JoinColumn(name = "produto_id", nullable = false)
     @JsonBackReference("produto-itens")
     private Produto produto;
+
+    // Custom getters and setters
+    public void setSubtotal(BigDecimal value) {
+        this.subtotal = value;
+    }
+
+    public BigDecimal getSubtotal() {
+        return precoUnitario.multiply(new BigDecimal(quantidade));
+    }
 }
