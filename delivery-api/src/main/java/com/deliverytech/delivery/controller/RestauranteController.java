@@ -1,7 +1,10 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.entity.Restaurante;
-import com.deliverytech.delivery.service.RestauranteService;
+import com.deliverytech.delivery.dto.restaurante.RestauranteRequestDTO;
+import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
+import com.deliverytech.delivery.service.implementations.RestauranteServiceImpl;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +20,14 @@ import java.util.List;
 public class RestauranteController {
 
     @Autowired
-    private RestauranteService restauranteService;
+    private RestauranteServiceImpl restauranteService;
 
     /*
      * Cadastrar novo restaurante
      */
     @PostMapping
-    public ResponseEntity<Restaurante> cadastrar(@RequestBody Restaurante restaurante) {
-        Restaurante restauranteSalvo = restauranteService.cadastrar(restaurante);
+    public ResponseEntity<RestauranteResponseDTO> cadastrar(@RequestBody @Valid RestauranteRequestDTO dto) {
+        RestauranteResponseDTO restauranteSalvo = restauranteService.cadastrar(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -39,25 +42,23 @@ public class RestauranteController {
      * Listar todos os restaurantes ativos
      */
     @GetMapping
-    public ResponseEntity<List<Restaurante>> listar() {
-        return ResponseEntity.ok(restauranteService.listarTodosAtivos());
+    public ResponseEntity<List<RestauranteResponseDTO>> listar() {
+        return ResponseEntity.ok(restauranteService.buscarDisponiveis());
     }
 
     /*
      * Buscar restaurante por ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurante> buscarPorId(@PathVariable Long id) {
-        return restauranteService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<RestauranteResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(restauranteService.buscarPorId(id));
     }
 
     /*
      * Buscar restaurante por nome
      */
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Restaurante>> buscarPorNome(@PathVariable String nome) {
+    public ResponseEntity<List<RestauranteResponseDTO>> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(restauranteService.buscarPorNome(nome));
     }
 
@@ -65,7 +66,7 @@ public class RestauranteController {
      * Buscar restaurante por categoria
      */
     @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<Restaurante>> buscarPorCategoria(@PathVariable String categoria) {
+    public ResponseEntity<List<RestauranteResponseDTO>> buscarPorCategoria(@PathVariable String categoria) {
         return ResponseEntity.ok(restauranteService.buscarPorCategoria(categoria));
     }
 
@@ -73,8 +74,9 @@ public class RestauranteController {
      * Atualizar restaurante
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Restaurante> atualizar(@PathVariable Long id, @RequestBody Restaurante novo) {
-        return ResponseEntity.ok(restauranteService.atualizar(id, novo));
+    public ResponseEntity<RestauranteResponseDTO> atualizar(@PathVariable Long id,
+            @RequestBody @Valid RestauranteRequestDTO dto) {
+        return ResponseEntity.ok(restauranteService.atualizar(id, dto));
     }
 
     /*
