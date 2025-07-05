@@ -3,6 +3,7 @@ package com.deliverytech.delivery.controller;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.core.SpringVersion;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class HealthController {
         "1.0.0",
         "Anderson S.T.",
         "JDK 21",
-        "Spring Boot 3.2.x");
+        "Spring Boot " + SpringVersion.getVersion());
   }
 
   // Record para demonstrar recurso do Java 14+ (disponível no JDK 21)
