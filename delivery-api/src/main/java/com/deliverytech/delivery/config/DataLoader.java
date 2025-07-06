@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import com.deliverytech.delivery.entity.Cliente;
 import com.deliverytech.delivery.entity.ItemPedido;
@@ -18,7 +17,7 @@ import com.deliverytech.delivery.repository.PedidoRepository;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 
-@Component
+// @Component (apenas para exemplo: não inicializar os dados via command line)
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
@@ -197,7 +196,7 @@ public class DataLoader implements CommandLineRunner {
         Pedido pedido1 = new Pedido();
         pedido1.setNumeroPedido("PED1234567890");
         pedido1.setDataPedido(java.time.LocalDateTime.now());
-        pedido1.setStatus(StatusPedido.PENDENTE);
+        pedido1.setStatus(StatusPedido.PENDENTE.name());
         pedido1.setValorTotal(new BigDecimal("54.80"));
         pedido1.setObservacoes("Sem cebola na pizza");
         pedido1.setCliente(clienteRepository.findById(1L).orElse(null));
@@ -206,7 +205,7 @@ public class DataLoader implements CommandLineRunner {
         Pedido pedido2 = new Pedido();
         pedido2.setNumeroPedido("PED1234567891");
         pedido2.setDataPedido(java.time.LocalDateTime.now());
-        pedido2.setStatus(StatusPedido.CONFIRMADO);
+        pedido2.setStatus(StatusPedido.CONFIRMADO.name());
         pedido2.setValorTotal(new BigDecimal("41.80"));
         pedido2.setObservacoes("");
         pedido2.setCliente(clienteRepository.findById(2L).orElse(null));
@@ -215,7 +214,7 @@ public class DataLoader implements CommandLineRunner {
         Pedido pedido3 = new Pedido();
         pedido3.setNumeroPedido("PED1234567892");
         pedido3.setDataPedido(java.time.LocalDateTime.now());
-        pedido3.setStatus(StatusPedido.ENTREGUE);
+        pedido3.setStatus(StatusPedido.ENTREGUE.name());
         pedido3.setValorTotal(new BigDecimal("78.80"));
         pedido3.setObservacoes("Wasabi à parte");
         pedido3.setCliente(clienteRepository.findById(3L).orElse(null));
@@ -251,7 +250,7 @@ public class DataLoader implements CommandLineRunner {
         item4.setSubtotal(new BigDecimal("18.90"));
         item4.setProduto(produtoRepository.findById(4L).orElse(null));
         item4.setPedido(pedido2);
-        
+
         pedido2.setItens(Arrays.asList(item3, item4));
 
         ItemPedido item5 = new ItemPedido();
@@ -267,7 +266,7 @@ public class DataLoader implements CommandLineRunner {
         item6.setSubtotal(new BigDecimal("32.90"));
         item6.setProduto(produtoRepository.findById(8L).orElse(null));
         item6.setPedido(pedido3);
-        
+
         pedido3.setItens(Arrays.asList(item5, item6));
 
         // Salvar os pedidos
