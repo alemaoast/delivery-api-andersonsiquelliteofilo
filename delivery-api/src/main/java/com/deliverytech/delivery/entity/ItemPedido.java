@@ -2,8 +2,6 @@ package com.deliverytech.delivery.entity;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,20 +34,9 @@ public class ItemPedido {
 
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
-    @JsonBackReference("pedido-itens")
     private Pedido pedido;
 
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
-    @JsonBackReference("produto-itens")
     private Produto produto;
-
-    // Custom getters and setters
-    public void setSubtotal(BigDecimal value) {
-        this.subtotal = value;
-    }
-
-    public BigDecimal getSubtotal() {
-        return precoUnitario.multiply(new BigDecimal(quantidade));
-    }
 }

@@ -4,7 +4,7 @@ import com.deliverytech.delivery.dto.pedido.ItemPedidoRequestDTO;
 import com.deliverytech.delivery.dto.pedido.PedidoRequestDTO;
 import com.deliverytech.delivery.dto.pedido.PedidoResponseDTO;
 import com.deliverytech.delivery.enums.StatusPedido;
-import com.deliverytech.delivery.service.implementations.PedidoServiceImpl;
+import com.deliverytech.delivery.services.impl.PedidoServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -52,18 +52,9 @@ public class PedidoController {
     /*
      * Busca um pedido pelo ID do cliente
      */
-    @GetMapping("/clientes/{clienteId}/pedidos")
-    public ResponseEntity<List<PedidoResponseDTO>> buscarPorCliente(@PathVariable Long clienteId) {
-        return ResponseEntity.ok(pedidoService.buscarPorCliente(clienteId));
-    }
-
-    /*
-     * Atualiza o status de um pedido
-     */
-    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<PedidoResponseDTO> atualizarStatus(@PathVariable Long id, @RequestParam StatusPedido status) {
-        return ResponseEntity.ok(pedidoService.atualizarStatus(id, status));
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<PedidoResponseDTO>> listarPorCliente(@PathVariable Long clienteId) {
+        return ResponseEntity.ok(pedidoService.listarPorCliente(clienteId));
     }
 
     /*
@@ -80,6 +71,16 @@ public class PedidoController {
      */
     @PostMapping("/calcular")
     public ResponseEntity<BigDecimal> calcularValorTotal(@RequestBody List<ItemPedidoRequestDTO> itens) {
-        return ResponseEntity.ok(pedidoService.calcularTotalPedido(itens));
+        return ResponseEntity.ok(pedidoService.calcularValorTotalPedido(itens));
+    }
+
+    
+    /*
+     * Atualiza o status de um pedido
+     */
+    @PatchMapping("/{id}/{status}")
+    public ResponseEntity<PedidoResponseDTO> atualizarStatus(@PathVariable Long id, 
+    @PathVariable StatusPedido status) {
+        return ResponseEntity.ok(pedidoService.atualizarStatus(id, status));
     }
 }

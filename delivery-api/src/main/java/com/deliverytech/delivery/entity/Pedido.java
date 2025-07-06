@@ -3,9 +3,6 @@ package com.deliverytech.delivery.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,14 +19,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.deliverytech.delivery.enums.StatusPedido;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pedidos")
+@Table(name = "pedido")
 public class Pedido {
 
     @Id
@@ -42,13 +36,18 @@ public class Pedido {
     @Column(name = "data_pedido")
     private LocalDateTime dataPedido;
 
-    @Enumerated(EnumType.STRING)
-    private StatusPedido status;
+    private String status;
 
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
 
     private String observacoes;
+
+    @Column(name = "endereco_entrega")
+    private String enderecoEntrega;
+
+    @Column(name = "taxa_entrega")
+    private BigDecimal taxaEntrega;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
@@ -58,7 +57,6 @@ public class Pedido {
     @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference("pedido-itens")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 }

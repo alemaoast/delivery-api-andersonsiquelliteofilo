@@ -11,32 +11,31 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class PedidoRequestDTO {
 
   @NotBlank(message = ExceptionMessage.NumeroPedidoObrigatorio)
   private String numeroPedido;
 
   @Past()
+  @NotNull(message = ExceptionMessage.DataPedidoObrigatoria)
   private LocalDateTime dataPedido;
 
   private String observacoes;
 
-  @NotNull
+  private String enderecoEntrega;
+
   @Min(0)
+  @NotNull(message = ExceptionMessage.ClienteObrigatorio)
   private Long clienteId;
 
-  @NotNull
   @Min(0)
+  @NotNull(message = ExceptionMessage.RestauranteObrigatorio)
   private Long restauranteId;
 
   @Valid
-  @NotEmpty
+  @NotEmpty(message = ExceptionMessage.ItensPedidoObrigatorios)
   private List<ItemPedidoRequestDTO> itens;
 }

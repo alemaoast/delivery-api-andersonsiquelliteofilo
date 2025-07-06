@@ -1,27 +1,22 @@
 package com.deliverytech.delivery.dto.pedido;
 
-import java.math.BigDecimal;
+import com.deliverytech.delivery.exception.ExceptionMessage;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ItemPedidoRequestDTO {
 
-  @NotNull
   @Min(0)
+  @NotNull(message = ExceptionMessage.ProdutoObrigatorio)
+  private Long produtoId;
+
+  @Min(value = 1, message = ExceptionMessage.QuantidadeMaiorQueZero)
+  @Max(value = 100, message = ExceptionMessage.QuantidadeMenorQueCem)
+  @NotNull(message = ExceptionMessage.QuantidadeObrigatoria)
   private Integer quantidade;
 
-  @NotNull
-  @Min(0)
-  private BigDecimal precoUnitario;
-
-  @NotNull
-  @Min(0)
-  private Long produtoId;
 }
