@@ -1,56 +1,59 @@
-
-CREATE TABLE clientes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE cliente (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     telefone VARCHAR(20),
-    endereco VARCHAR(255),
+    endereco VARCHAR(200),
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ativo BOOLEAN DEFAULT TRUE
+    ativo TINYINT(1)
 );
 
-CREATE TABLE restaurantes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE restaurante (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     categoria VARCHAR(50),
-    endereco VARCHAR(255),
+    endereco VARCHAR(200),
     telefone VARCHAR(20),
     taxa_entrega DECIMAL(10,2),
     avaliacao DECIMAL(2,1),
-    ativo BOOLEAN DEFAULT TRUE
+    ativo TINYINT(1)
 );
 
-CREATE TABLE produtos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE produto (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    descricao VARCHAR(255),
+    descricao VARCHAR(200),
     preco DECIMAL(10,2),
     categoria VARCHAR(50),
-    disponivel BOOLEAN DEFAULT TRUE,
-    restaurante_id INT,
-    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
+    disponivel TINYINT(1),
+    restaurante_id BIGINT,
+    FOREIGN KEY (restaurante_id) REFERENCES restaurante(id)
 );
 
-CREATE TABLE pedidos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE pedido (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     numero_pedido VARCHAR(20) NOT NULL,
     data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20),
     valor_total DECIMAL(10,2),
-    observacoes VARCHAR(255),
-    cliente_id INT,
-    restaurante_id INT,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
-    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
+    observacoes VARCHAR(200),
+    cliente_id BIGINT,
+    restaurante_id BIGINT,
+    endereco_entrega VARCHAR(200),
+    subtotal DECIMAL(10,2),
+    taxa_entrega DECIMAL(10,2),
+    itens VARCHAR(200),
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id),
+    FOREIGN KEY (restaurante_id) REFERENCES restaurante(id)
 );
 
-CREATE TABLE itens_pedido (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE item_pedido (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     quantidade INT NOT NULL,
-    preco_unitario DECIMAL(10,2),
-    subtotal DECIMAL(10,2),
-    pedido_id INT,
-    produto_id INT,
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
-    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+    preco_unitario DECIMAL(19,2) NOT NULL,
+    subtotal DECIMAL(19,2) NOT NULL,
+    pedido_id BIGINT,
+    produto_id BIGINT,
+    FOREIGN KEY (pedido_id) REFERENCES pedido(id),
+    FOREIGN KEY (produto_id) REFERENCES produto(id)
 );
