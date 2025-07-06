@@ -1,10 +1,10 @@
 package com.deliverytech.delivery.exception;
 
-import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,46 +16,54 @@ import jakarta.persistence.EntityNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public record ErroResponse(String erro, String detalhe, LocalDateTime data) {
-    }
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErroResponse> handleException(Exception ex) {
-        return ResponseEntity.internalServerError()
-                .body(new ErroResponse("Erro interno do servidor", ex.getMessage(), LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErroResponse> handleIllegalArgument(IllegalArgumentException ex) {
-        return ResponseEntity.badRequest().body(new ErroResponse(ex.getMessage(), null, LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(InvalidParameterException.class)
-    public ResponseEntity<ErroResponse> handleInvalidParameterException(InvalidParameterException ex) {
-        return ResponseEntity.badRequest().body(new ErroResponse(ex.getMessage(), null, LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErroResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        String detalhe = ex.getField() + " = " + ex.getValue();
-        return ResponseEntity.badRequest().body(new ErroResponse(ex.getMessage(), detalhe, LocalDateTime.now()));
+    public ResponseEntity<ValidationErrorResponse> handleGenericException(Exception ex) {
+        ValidationErrorResponse error = new ValidationErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Erro interno do servidor",
+                "Ocorreu um erro inesperado",
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErroResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return ResponseEntity.badRequest().body(new ErroResponse(ex.getMessage(), null, LocalDateTime.now()));
+    public ResponseEntity<ValidationErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+
+        ValidationErrorResponse error = new ValidationErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Entidade não encontrada",
+                ex.getMessage(),
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ValidationErrorResponse> handleBusinessException(BusinessException ex) {
+        ValidationErrorResponse error = new ValidationErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro de regra de negócio",
+                ex.getMessage(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        List<String> messages = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList());
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
 
-        String detalhe = java.util.Collections.singletonMap("messages", messages).toString();
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
 
-        return ResponseEntity.badRequest().body(new ErroResponse(ex.getMessage(), detalhe, LocalDateTime.now()));
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Dados inválidos",
+                errors.toString(),
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }
