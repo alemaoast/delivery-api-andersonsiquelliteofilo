@@ -1,13 +1,14 @@
 package com.deliverytech.delivery.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
 import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
-import com.deliverytech.delivery.service.interfaces.ClienteService;
+import com.deliverytech.delivery.services.ClienteService;
 
 import jakarta.validation.Valid;
 
@@ -39,19 +40,27 @@ public class ClienteController {
     }
 
     /**
-     * Listar todos os clientes ativos
-     */
-    @GetMapping
-    public ResponseEntity<List<ClienteResponseDTO>> listar() {
-        return ResponseEntity.ok(clienteService.listarTodosAtivos());
-    }
-
-    /**
      * Buscar cliente por ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.buscarPorId(id));
+    }
+
+    /**
+     * Buscar cliente por email
+     */
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ClienteResponseDTO> buscarPorEmail(@PathVariable String email) {
+        return ResponseEntity.ok(clienteService.buscarPorEmail(email));
+    }
+
+    /**
+     * Listar todos os clientes ativos
+     */
+    @GetMapping
+    public ResponseEntity<List<ClienteResponseDTO>> listar() {
+        return ResponseEntity.ok(clienteService.listarAtivos());
     }
 
     /**
@@ -63,37 +72,18 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.atualizar(id, cliente));
     }
 
-    /**
-     * Inativar cliente (soft delete)
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> inativar(@PathVariable Long id) {
-        clienteService.inativar(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    /*
-     * Ativar desativar cliente (toggle)
-     */
     @PatchMapping("/{id}/status")
-    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
-    public ResponseEntity<ClienteResponseDTO> atualizarStatus(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.ativarDesativar(id));
+    public ResponseEntity<ClienteResponseDTO> ativarDesativarCliente(@PathVariable Long id) {
+        ClienteResponseDTO clienteAtualizado = clienteService.ativarDesativar(id);
+        return ResponseEntity.ok(clienteAtualizado);
     }
 
     /**
      * Buscar clientes por nome
      */
-    @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<ClienteResponseDTO>> buscarPorNome(@PathVariable String nome) {
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ClienteResponseDTO>> buscarPorNome(@Param("nome") String nome) {
         return ResponseEntity.ok(clienteService.buscarPorNome(nome));
     }
 
-    /**
-     * Buscar cliente por email
-     */
-    @GetMapping("/email/{email}")
-    public ResponseEntity<ClienteResponseDTO> buscarPorEmail(@PathVariable String email) {
-        return ResponseEntity.ok(clienteService.buscarPorEmail(email));
-    }
 }

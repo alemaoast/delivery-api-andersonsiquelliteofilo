@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.service.implementations;
+package com.deliverytech.delivery.services.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
 import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
 import com.deliverytech.delivery.entity.Cliente;
+import com.deliverytech.delivery.exception.BusinessException;
 import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.repository.ClienteRepository;
-import com.deliverytech.delivery.service.interfaces.ClienteService;
+import com.deliverytech.delivery.services.ClienteService;
 
 import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
@@ -27,17 +27,14 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-     * Cadastrar novo cliente
-     */
     @Override
-    public ClienteResponseDTO cadastrar(ClienteRequestDTO clienteCadastrar) {
+    public ClienteResponseDTO cadastrar(ClienteRequestDTO dto) {
 
         // Validar email único
-        if (clienteRepository.existsByEmail(clienteCadastrar.getEmail()))
-            throw new IllegalArgumentException(ExceptionMessage.EmailJaCadastrado);
+        if (clienteRepository.existsByEmail(dto.getEmail()))
+            throw new BusinessException(ExceptionMessage.EmailJaCadastrado);
 
-        Cliente cliente = modelMapper.map(clienteCadastrar, Cliente.class);
+        Cliente cliente = modelMapper.map(dto, Cliente.class);
         cliente.setAtivo(true); // Definir como ativo por padrão
         cliente.setDataCadastro(LocalDateTime.now());
 
@@ -46,9 +43,6 @@ public class ClienteServiceImpl implements ClienteService {
         return modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
     }
 
-    /**
-     * Buscar cliente por ID
-     */
     @Override
     @Transactional(readOnly = true)
     public ClienteResponseDTO buscarPorId(Long id) {
@@ -59,22 +53,6 @@ public class ClienteServiceImpl implements ClienteService {
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
-    /**
-     * Buscar cliente por nome
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List<ClienteResponseDTO> buscarPorNome(String nome) {
-        List<Cliente> cliente = clienteRepository.findByNomeContainingIgnoreCase(nome);
-        return cliente
-                .stream()
-                .map(c -> modelMapper.map(c, ClienteResponseDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Buscar cliente por email
-     */
     @Override
     @Transactional(readOnly = true)
     public ClienteResponseDTO buscarPorEmail(String email) {
@@ -85,59 +63,28 @@ public class ClienteServiceImpl implements ClienteService {
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
 
-    /**
-     * Listar todos os clientes ativos
-     */
     @Override
-    @Transactional(readOnly = true)
-    public List<ClienteResponseDTO> listarTodosAtivos() {
-        return clienteRepository.findByAtivoTrue()
-                .stream()
-                .map(c -> modelMapper.map(c, ClienteResponseDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Atualizar dados do cliente
-     */
-    @Override
-    public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO clienteAtualizado) {
+    public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO dto) {
 
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
 
         // Verificar se email não está sendo usado por outro cliente
-        if (!cliente.getEmail().equals(clienteAtualizado.getEmail()) &&
-                clienteRepository.existsByEmail(clienteAtualizado.getEmail()))
-            throw new IllegalArgumentException(ExceptionMessage.EmailJaCadastrado + " " + clienteAtualizado.getEmail());
+        if (!cliente.getEmail().equals(dto.getEmail()) &&
+                clienteRepository.existsByEmail(dto.getEmail()))
+            throw new BusinessException(ExceptionMessage.EmailJaCadastrado);
 
         // Atualizar campos
-        cliente.setNome(clienteAtualizado.getNome());
-        cliente.setEmail(clienteAtualizado.getEmail());
-        cliente.setTelefone(clienteAtualizado.getTelefone());
-        cliente.setEndereco(clienteAtualizado.getEndereco());
+        cliente.setNome(dto.getNome());
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefone(dto.getTelefone());
+        cliente.setEndereco(dto.getEndereco());
 
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
         return modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
     }
 
-    /**
-     * Inativar cliente (soft delete)
-     */
-    @Override
-    public void inativar(Long id) {
-
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
-
-        cliente.inativar();
-        clienteRepository.save(cliente);
-    }
-
-    /**
-     * Ativar desativar cliente
-     */
     @Override
     public ClienteResponseDTO ativarDesativar(Long id) {
 
@@ -149,5 +96,25 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente clienteSalvo = clienteRepository.save(cliente);
 
         return modelMapper.map(clienteSalvo, ClienteResponseDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClienteResponseDTO> listarAtivos() {
+
+        return clienteRepository.findByAtivoTrue()
+                .stream()
+                .map(c -> modelMapper.map(c, ClienteResponseDTO.class))
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClienteResponseDTO> buscarPorNome(String nome) {
+
+        return clienteRepository.findByNomeContainingIgnoreCase(nome)
+                .stream()
+                .map(c -> modelMapper.map(c, ClienteResponseDTO.class))
+                .toList();
     }
 }

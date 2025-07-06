@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.service.interfaces;
+package com.deliverytech.delivery.services;
 
 import java.util.List;
 
@@ -11,15 +11,13 @@ public interface ClienteService {
 
   ClienteResponseDTO buscarPorId(Long id);
 
-  List<ClienteResponseDTO> buscarPorNome(String nome);
-
   ClienteResponseDTO buscarPorEmail(String email);
 
   ClienteResponseDTO atualizar(Long id, ClienteRequestDTO dto);
 
   ClienteResponseDTO ativarDesativar(Long id);
 
-  List<ClienteResponseDTO> listarTodosAtivos();
+  List<ClienteResponseDTO> listarAtivos();
 
-  void inativar(Long id);
+  List<ClienteResponseDTO> buscarPorNome(String nome);
 }
