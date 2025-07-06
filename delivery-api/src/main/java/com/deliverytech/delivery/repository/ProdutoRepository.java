@@ -11,18 +11,18 @@ import com.deliverytech.delivery.entity.Produto;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    // Buscar produtos por restaurante
+    // Buscar produtos por restaurante id
     List<Produto> findByRestauranteId(Long restauranteId);
-
-    // Buscar produtos por categoria
-    List<Produto> findByCategoriaContainingIgnoreCase(String categoria);
-
-    // Buscar produtos disponiveis por restaurante
-    List<Produto> findByDisponivelTrueAndRestauranteId(Long restauranteId);
 
     // Buscar produtos disponiveis
     List<Produto> findByDisponivelTrue();
 
+    // Buscar produtos por categoria
+    List<Produto> findByCategoria(String categoria);
+
     // Buscar produtos por preço menor ou igual a um valor especificado
     List<Produto> findByPrecoLessThanEqual(BigDecimal preco);
+
+    // Buscar produtos por nome
+    Produto findByNome(String nome);
 }

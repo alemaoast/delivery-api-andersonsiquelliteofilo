@@ -7,13 +7,9 @@ import java.util.List;
 import com.deliverytech.delivery.dto.pedido.ItemPedidoResponseDTO;
 import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProdutoResponseDTO {
   private Long id;
   private String nome;

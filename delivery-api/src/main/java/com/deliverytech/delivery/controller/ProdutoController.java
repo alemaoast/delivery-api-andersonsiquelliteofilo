@@ -2,7 +2,7 @@ package com.deliverytech.delivery.controller;
 
 import com.deliverytech.delivery.dto.produto.ProdutoRequestDTO;
 import com.deliverytech.delivery.dto.produto.ProdutoResponseDTO;
-import com.deliverytech.delivery.service.implementations.ProdutoServiceImpl;
+import com.deliverytech.delivery.services.impl.ProdutoServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -47,6 +48,27 @@ public class ProdutoController {
     }
 
     /*
+     * Atualizar produto
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoResponseDTO> atualizar(@PathVariable Long id,
+            @RequestBody @Valid ProdutoRequestDTO dto) {
+        return ResponseEntity.ok(produtoService.atualizar(id, dto));
+    }
+
+   @PatchMapping("/{id}/ativar-desativar")
+    public ResponseEntity<ProdutoResponseDTO> ativarDesativar(@PathVariable Long id) {
+        ProdutoResponseDTO produtoAtualizado = produtoService.ativarDesativar(id);
+        return ResponseEntity.ok(produtoAtualizado);
+    }
+
+     @GetMapping("/nome/{nome}")
+    public ResponseEntity<ProdutoResponseDTO> buscarPorNome(@PathVariable String nome) {
+        ProdutoResponseDTO produto = produtoService.buscarPorNome(nome);
+        return ResponseEntity.ok(produto);
+    }
+
+    /*
      * Buscar produtos por restaurante ID
      */
     @GetMapping("/restaurante/{restauranteId}")
@@ -62,22 +84,22 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarPorCategoria(categoria));
     }
 
-    /*
-     * Atualizar produto
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable Long id,
-            @RequestBody @Valid ProdutoRequestDTO dto) {
-        return ResponseEntity.ok(produtoService.atualizar(id, dto));
+    
+    @GetMapping("/preco")
+    public ResponseEntity<List<ProdutoResponseDTO>>buscarPorPreco(@RequestParam BigDecimal precoMinimo, @RequestParam BigDecimal precoMaximo) {
+        List<ProdutoResponseDTO> produtos = produtoService.buscarPorPreco(precoMinimo, precoMaximo);
+        return ResponseEntity.ok(produtos);
     }
 
-    /*
-     * Deletar produto
-     */
-    @PatchMapping("/{id}/disponibilidade")
-    @CrossOrigin(origins = "*", methods = { RequestMethod.PATCH })
-    public ResponseEntity<ProdutoResponseDTO> alterarDisponibilidade(@PathVariable Long id,
-            @RequestParam boolean disponibilidade) {
-        return ResponseEntity.ok(produtoService.alterarDisponibilidade(id, disponibilidade));
+    @GetMapping
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarTodosProdutos() {
+        List<ProdutoResponseDTO> produtos = produtoService.buscarTodosProdutos();
+        return ResponseEntity.ok(produtos);
+    }
+    // preço menor ou igual a 20.00
+    @GetMapping("/preco/{valor}")
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorPrecoMenorOuIgual(@PathVariable BigDecimal valor) {
+        List<ProdutoResponseDTO> produtos = produtoService.buscarPorPrecoMenorOuIgual(valor);
+        return ResponseEntity.ok(produtos);
     }
 }
