@@ -13,7 +13,7 @@ public class ModelMapperConfig {
   public ModelMapper modelMapper() {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper.getConfiguration()
-        .setMatchingStrategy(MatchingStrategies.STRICT)
+        .setMatchingStrategy(MatchingStrategies.LOOSE) // Permitir mapeamento aninhado
         .setFieldMatchingEnabled(true)
         .setFieldAccessLevel(AccessLevel.PRIVATE);
 
