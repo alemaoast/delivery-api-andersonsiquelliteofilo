@@ -8,5 +8,5 @@ public interface RelatorioVendas {
 
   BigDecimal getTotalVendas();
 
-  Long getQuantiadePedidos();
+  Long getQuantidadePedidos();
 }

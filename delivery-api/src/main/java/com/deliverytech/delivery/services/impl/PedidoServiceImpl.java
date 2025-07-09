@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -194,6 +196,26 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
         return modelMapper.map(pedidoSalvo, PedidoResponseDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PedidoResponseDTO> listarPorPeriodo(LocalDate inicio, LocalDate fim) {
+
+        // A data de inicio não pode ser antes do delivery existir
+        if (inicio.equals(LocalDate.of(2024, 12, 31)))
+            throw new BusinessException("Data de inicio inválida");
+
+        // A data de fim não pode ser futura
+        if (fim.equals(LocalDateTime.now().plusDays(1)))
+            throw new BusinessException("Data fim inválida");
+
+        List<Pedido> pedidos = pedidoRepository.findByDataPedidoBetween(inicio.atStartOfDay(),
+                fim.atTime(LocalTime.of(23, 59)));
+        if (pedidos.isEmpty())
+            throw new EntityNotFoundException(ExceptionMessage.NenhumPedidoEncontrado);
+
+        return pedidos.stream().map(p -> modelMapper.map(p, PedidoResponseDTO.class)).toList();
     }
 
     private boolean isTransicaoValida(StatusPedido statusAtual, StatusPedido novoStatus) {

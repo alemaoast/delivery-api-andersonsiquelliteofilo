@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
 import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
+import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 
 public interface ClienteService {
 
@@ -20,4 +21,6 @@ public interface ClienteService {
   List<ClienteResponseDTO> listarAtivos();
 
   List<ClienteResponseDTO> buscarPorNome(String nome);
+
+  List<RelatorioVendasClientes> listarTop5RealizamMaisPedidos();
 }

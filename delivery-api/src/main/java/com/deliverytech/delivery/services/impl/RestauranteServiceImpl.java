@@ -160,11 +160,9 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         List<RelatorioVendas> relatorio = restauranteRepository.relatorioVendasPorRestaurante();
         if (relatorio.isEmpty())
-            throw new BusinessException(ExceptionMessage.NenhumaVendaEncontrada);
+            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada);
 
-        return relatorio.stream()
-                .map(restaurante -> modelMapper.map(restaurante, RelatorioVendas.class))
-                .toList();
+        return relatorio;
     }
 
     @Override

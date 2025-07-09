@@ -46,6 +46,7 @@ public class ExceptionMessage {
   public static final String RestaurantesNaoEncontradosParaFaixaPreco = "Nenhum restaurante encontrado na faixa de preço: R$ {0} a R$ {1}.";
   public static final String RestauranteNaoEncontradosParaPrecoMenor = "Nenhum restaurante encontrado com preço menor ou igual a: R$ {0}.";
   public static final String NenhumaVendaEncontrada = "Nenhum dado de vendas encontrado.";
+  public static final String NenhumPedidoEncontrado = "Nenhum pedido encontrado.";
   
   // Inativo
   public static final String ClienteInativo = "O cliente está inativo.";

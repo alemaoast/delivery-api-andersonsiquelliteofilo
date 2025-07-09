@@ -6,6 +6,7 @@ import com.deliverytech.delivery.entity.Produto;
 import com.deliverytech.delivery.entity.Restaurante;
 import com.deliverytech.delivery.exception.BusinessException;
 import com.deliverytech.delivery.exception.ExceptionMessage;
+import com.deliverytech.delivery.projection.RelatorioVendasProdutos;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 import com.deliverytech.delivery.services.ProdutoService;
@@ -180,4 +181,14 @@ public class ProdutoServiceImpl implements ProdutoService {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<RelatorioVendasProdutos> listarTop5MaisVendidos() {
+        
+        List<RelatorioVendasProdutos> relatorio = produtoRepository.listarTop5ProdutosMaisVendidos();
+        if (relatorio.isEmpty())
+            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada);
+
+        return relatorio;
+    }
 }

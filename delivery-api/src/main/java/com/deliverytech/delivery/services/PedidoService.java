@@ -1,6 +1,8 @@
 package com.deliverytech.delivery.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.deliverytech.delivery.dto.pedido.ItemPedidoRequestDTO;
@@ -21,4 +23,6 @@ public interface PedidoService {
   BigDecimal calcularValorTotalPedido(List<ItemPedidoRequestDTO> itens);
 
   PedidoResponseDTO cancelar(Long id);
+
+  List<PedidoResponseDTO> listarPorPeriodo(LocalDate inicio, LocalDate fim);
 }

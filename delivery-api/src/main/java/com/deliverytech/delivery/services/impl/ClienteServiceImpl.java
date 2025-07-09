@@ -10,6 +10,7 @@ import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
 import com.deliverytech.delivery.entity.Cliente;
 import com.deliverytech.delivery.exception.BusinessException;
 import com.deliverytech.delivery.exception.ExceptionMessage;
+import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 import com.deliverytech.delivery.repository.ClienteRepository;
 import com.deliverytech.delivery.services.ClienteService;
 
@@ -116,5 +117,16 @@ public class ClienteServiceImpl implements ClienteService {
                 .stream()
                 .map(c -> modelMapper.map(c, ClienteResponseDTO.class))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RelatorioVendasClientes> listarTop5RealizamMaisPedidos() {
+
+        List<RelatorioVendasClientes> relatorio = clienteRepository.listarTop5ClientesQueMaisCompram();
+        if (relatorio.isEmpty())
+            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada);
+            
+        return relatorio;
     }
 }

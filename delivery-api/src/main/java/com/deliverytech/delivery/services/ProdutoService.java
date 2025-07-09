@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.deliverytech.delivery.dto.produto.ProdutoRequestDTO;
 import com.deliverytech.delivery.dto.produto.ProdutoResponseDTO;
+import com.deliverytech.delivery.projection.RelatorioVendasProdutos;
 
 public interface ProdutoService {
 
@@ -27,4 +28,6 @@ public interface ProdutoService {
   List<ProdutoResponseDTO> buscarTodosProdutos();
 
   List<ProdutoResponseDTO> buscarPorPrecoMenorOuIgual(BigDecimal valor);
+
+  List<RelatorioVendasProdutos> listarTop5MaisVendidos();
 }
