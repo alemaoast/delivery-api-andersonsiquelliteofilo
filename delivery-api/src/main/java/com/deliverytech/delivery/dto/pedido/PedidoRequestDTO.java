@@ -25,6 +25,7 @@ public class PedidoRequestDTO {
 
   private String observacoes;
 
+  @NotNull(message = "O endereço de entrega é obrigatório.")
   private String enderecoEntrega;
 
   @Min(0)
