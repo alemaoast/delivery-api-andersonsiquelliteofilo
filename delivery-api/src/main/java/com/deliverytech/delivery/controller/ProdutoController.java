@@ -56,13 +56,13 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.atualizar(id, dto));
     }
 
-   @PatchMapping("/{id}/ativar-desativar")
+    @PatchMapping("/{id}/ativar-desativar")
     public ResponseEntity<ProdutoResponseDTO> ativarDesativar(@PathVariable Long id) {
         ProdutoResponseDTO produtoAtualizado = produtoService.ativarDesativar(id);
         return ResponseEntity.ok(produtoAtualizado);
     }
 
-     @GetMapping("/nome/{nome}")
+    @GetMapping("/nome/{nome}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorNome(@PathVariable String nome) {
         ProdutoResponseDTO produto = produtoService.buscarPorNome(nome);
         return ResponseEntity.ok(produto);
@@ -84,9 +84,9 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarPorCategoria(categoria));
     }
 
-    
     @GetMapping("/preco")
-    public ResponseEntity<List<ProdutoResponseDTO>>buscarPorPreco(@RequestParam BigDecimal precoMinimo, @RequestParam BigDecimal precoMaximo) {
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorPreco(@RequestParam BigDecimal precoMinimo,
+            @RequestParam BigDecimal precoMaximo) {
         List<ProdutoResponseDTO> produtos = produtoService.buscarPorPreco(precoMinimo, precoMaximo);
         return ResponseEntity.ok(produtos);
     }
@@ -96,10 +96,13 @@ public class ProdutoController {
         List<ProdutoResponseDTO> produtos = produtoService.buscarTodosProdutos();
         return ResponseEntity.ok(produtos);
     }
+
     // preço menor ou igual a 20.00
     @GetMapping("/preco/{valor}")
     public ResponseEntity<List<ProdutoResponseDTO>> buscarPorPrecoMenorOuIgual(@PathVariable BigDecimal valor) {
         List<ProdutoResponseDTO> produtos = produtoService.buscarPorPrecoMenorOuIgual(valor);
         return ResponseEntity.ok(produtos);
     }
+
+    // TODO: DELETE /api/produtos/{id} - Remover produto
 }

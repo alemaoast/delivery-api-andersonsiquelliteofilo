@@ -129,4 +129,11 @@ public class RestauranteController {
         return ResponseEntity.ok(relatorio);
     }
 
+    // TODO: GET /api/restaurantes/{id}/taxa-entrega/{cep} - Calcular taxa
+
+    // TODO: GET /api/restaurantes/{restauranteId}/produtos - Produtos do restaurante
+
+    // TODO: GET /api/restaurantes/proximos/{cep} - Restaurantes próximos
+
+    // TODO: GET /api/restaurantes/{restauranteId}/pedidos - Pedidos do restaurante
 }

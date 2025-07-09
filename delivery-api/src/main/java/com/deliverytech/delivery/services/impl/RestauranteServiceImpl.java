@@ -196,4 +196,6 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         return modelMapper.map(restauranteSalvo, RestauranteResponseDTO.class);
     }
+
+    // TODO: calcularTaxaEntrega(Long restauranteId, String cep) - Lógica de entrega
 }

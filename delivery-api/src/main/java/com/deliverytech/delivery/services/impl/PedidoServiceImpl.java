@@ -64,6 +64,8 @@ public class PedidoServiceImpl implements PedidoService {
         if (!restaurante.getAtivo())
             throw new BusinessException(ExceptionMessage.RestauranteNaoDisponivel);
 
+        // TODO: validar se restaurante entrega no endereço
+
         // 3. Validar todos os produtos existem e estão disponíveis
         List<ItemPedido> itensPedido = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -93,6 +95,7 @@ public class PedidoServiceImpl implements PedidoService {
         // 4. Calcular total do pedido
         BigDecimal taxaEntrega = restaurante.getTaxaEntrega();
         BigDecimal valorTotal = subtotal.add(taxaEntrega);
+        // TODO: aplicar desconto se tiver
 
         // 5. Salvar pedido
         Pedido pedido = new Pedido();
@@ -161,14 +164,14 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public BigDecimal calcularValorTotalPedido(List<ItemPedidoRequestDTO> itens) {  
+    public BigDecimal calcularValorTotalPedido(List<ItemPedidoRequestDTO> itens) {
 
         BigDecimal valorTotal = BigDecimal.ZERO;
         for (ItemPedidoRequestDTO item : itens) {
-            
+
             Produto produto = produtoRepository.findById(item.getProdutoId())
                     .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ProdutoNaoEncontrado));
-            
+
             valorTotal = valorTotal.add(produto.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())));
         }
         return valorTotal;

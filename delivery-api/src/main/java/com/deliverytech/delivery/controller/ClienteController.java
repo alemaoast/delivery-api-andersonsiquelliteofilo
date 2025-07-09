@@ -86,4 +86,5 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.buscarPorNome(nome));
     }
 
+    // TODO: GET /api/clientes/{clienteId}/pedidos - Histórico do cliente
 }

@@ -74,7 +74,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.calcularValorTotalPedido(itens));
     }
 
-    
     /*
      * Atualiza o status de um pedido
      */
@@ -83,4 +82,6 @@ public class PedidoController {
     @PathVariable StatusPedido status) {
         return ResponseEntity.ok(pedidoService.atualizarStatus(id, status));
     }
+
+    //TODO: GET /api/pedidos - Listar com filtros (status, data)
 }
