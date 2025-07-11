@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pedidos")
+@RequestMapping("/api/pedidos")
 @CrossOrigin(origins = "*")
 @Tag(name = "Pedidos", description = "Operações relacionadas aos pedidos")
 public class PedidoController {

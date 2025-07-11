@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurantes")
+@RequestMapping("/api/restaurantes")
 @CrossOrigin(origins = "*")
 @Tag(name = "Restaurantes", description = "Operações relacionadas aos restaurantes")
 public class RestauranteController {
@@ -77,8 +78,8 @@ public class RestauranteController {
         return ResponseEntity.ok(restauranteService.atualizar(id, dto));
     }
 
-    @PatchMapping("/{id}/ativar-desativar")
-    @Operation(summary = "Ativar ou desativar restaurante", description = "Ativar ou desativar restaurante")
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Ativar/Desativar restaurante", description = "Ativa ou desativa o status de um restaurante")
     public ResponseEntity<RestauranteResponseDTO> atualizarStatus(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.ativarDesativar(id));
     }
@@ -129,11 +130,36 @@ public class RestauranteController {
         return ResponseEntity.ok(relatorio);
     }
 
-    // TODO: GET /api/restaurantes/{id}/taxa-entrega/{cep} - Calcular taxa
+    @GetMapping("/{id}/taxa-entrega/{cep}")
+    @Operation(summary = "Calcular taxa de entrega", description = "Calcular taxa de entrega de um restaurante por cep")
+    public ResponseEntity<Void> calcularTaxaEntrega(
+        @PathVariable Long id,
+        @PathVariable String cep
+    ) {
+        throw new NotImplementedException();
+    }
 
-    // TODO: GET /api/restaurantes/{restauranteId}/produtos - Produtos do restaurante
+    @GetMapping("/proximos/{cep}")
+    @Operation(summary = "Buscar restaurantes próximos", description = "Buscar restaurantes próximos de um cep")
+    public ResponseEntity<Void> buscarRestaurantesProximos(
+        @PathVariable String cep
+    ) {
+        throw new NotImplementedException();
+    }
 
-    // TODO: GET /api/restaurantes/proximos/{cep} - Restaurantes próximos
+    @GetMapping("/{restauranteId}/produtos")
+    @Operation(summary = "Produtos do restaurante", description = "Buscar produtos por restaurante")
+    public ResponseEntity<Void> buscarProdutosPorRestaurante(
+        @PathVariable Long restauranteId
+    ) {
+        throw new NotImplementedException();
+    }
 
-    // TODO: GET /api/restaurantes/{restauranteId}/pedidos - Pedidos do restaurante
+    @GetMapping("/{restauranteId}/pedidos ")
+    @Operation(summary = "Pedidos do restaurante", description = "Buscar pedidos do restaurante")
+    public ResponseEntity<Void> buscarPedidosDoRestaurante(
+        @PathVariable Long restauranteId
+    ) {
+        throw new NotImplementedException();
+    }
 }

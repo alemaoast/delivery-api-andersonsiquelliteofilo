@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/clientes")
 @CrossOrigin(origins = "*")
 @Tag(name = "Clientes", description = "Operações relacionadas aos clientes")
 public class ClienteController {

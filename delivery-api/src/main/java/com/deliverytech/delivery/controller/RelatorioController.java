@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/relatorios")
+@RequestMapping("/api/relatorios")
 @CrossOrigin(origins = "*")
 @Tag(name = "Relatórios", description = "Relatórios gerais da plataforma")
 public class RelatorioController {

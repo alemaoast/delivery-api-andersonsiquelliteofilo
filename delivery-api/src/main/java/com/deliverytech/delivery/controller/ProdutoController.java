@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/produtos")
+@RequestMapping("/api/produtos")
 @CrossOrigin(origins = "*")
 @Tag(name = "Produtos", description = "Operações relacionadas aos produtos")
 public class ProdutoController {
@@ -69,8 +69,8 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.atualizar(id, dto));
     }
 
-    @PatchMapping("/{id}/ativar-desativar")
-    @Operation(summary = "Ativar/Desativar produto", description = "Ativa ou desativa um produto pelo ID")
+    @PatchMapping("/{id}/disponibilidade")
+    @Operation(summary = "Toggle disponibilidade", description = "Ativa ou desativa um produto pelo ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Produto ativado/desativado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Produto não encontrado")
