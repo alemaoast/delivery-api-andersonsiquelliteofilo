@@ -20,7 +20,7 @@ public class ErrorResponseDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private final LocalDateTime timestamp;
 
-    @Schema(description = "Código HTTP do erro")
+    @Schema(description = "Código HTTP do erro", example = "400")
     private final int status;
 
     @Schema(description = "Tipo do erro")

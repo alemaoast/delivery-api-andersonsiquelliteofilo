@@ -35,8 +35,8 @@ public class ClienteController {
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Cadastrar cliente", description = "Cria um novo cliente no sistema")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Cliente cadastrado com sucesso"),
-                        @ApiResponse(responseCode = "404", description = "Requisição inválida", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "201", description = "Cliente cadastrado com sucesso"),
+                        @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "409", description = "Cliente já cadastrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<ClienteResponseDTO> cadastrar(@RequestBody @Valid ClienteRequestDTO cliente) {
@@ -54,7 +54,7 @@ public class ClienteController {
         @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Buscar cliente por ID", description = "Recupera os detalhes de um cliente específico pelo ID")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Cliente encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
                         @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
@@ -64,7 +64,7 @@ public class ClienteController {
         @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Buscar cliente por email", description = "Recupera os detalhes de um cliente específico pelo email")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Cliente encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
                         @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<ClienteResponseDTO> buscarPorEmail(@PathVariable String email) {
@@ -74,7 +74,7 @@ public class ClienteController {
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Listar clientes ativos", description = "Lista todos os clientes que estão ativos no sistema")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada com sucesso", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada com sucesso"),
                         @ApiResponse(responseCode = "404", description = "Nenhum cliente encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<List<ClienteResponseDTO>> listar() {
@@ -96,7 +96,7 @@ public class ClienteController {
         @PatchMapping(value = "/{id}/status", produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Ativar/Desativar cliente", description = "Ativa ou desativa o status de um cliente")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
                         @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<ClienteResponseDTO> ativarDesativarCliente(@PathVariable Long id) {
@@ -107,7 +107,7 @@ public class ClienteController {
         @GetMapping(value = "/buscar", produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Buscar clientes por nome", description = "Recupera uma lista de clientes que correspondem ao nome fornecido")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Clientes encontrados", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Clientes encontrados"),
                         @ApiResponse(responseCode = "404", description = "Nenhum cliente encontrado com o nome fornecido", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
         public ResponseEntity<List<ClienteResponseDTO>> buscarPorNome(@Param("nome") String nome) {

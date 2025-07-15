@@ -20,6 +20,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,12 +39,12 @@ public class RestauranteController {
     @Autowired
     private RestauranteServiceImpl restauranteService;
 
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Cadastrar restaurante", description = "Cria um restaurante no sistema")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Restaurante criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "409", description = "Restaurante já existe"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "409", description = "Restaurante já existe", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
     })
     public ResponseEntity<RestauranteResponseDTO> cadastrar(@RequestBody @Valid RestauranteRequestDTO dto) {
         RestauranteResponseDTO restauranteSalvo = restauranteService.cadastrar(dto);
@@ -57,115 +58,131 @@ public class RestauranteController {
         return ResponseEntity.created(location).body(restauranteSalvo);
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Listar restaurantes", description = "Lista restaurantes ativos com filtros opcionais e paginação")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de restaurantes recuperada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+    })
     public ResponseEntity<ApiResponseWrapper<List<RestauranteResponseDTO>>> listar(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
             @Parameter(description = "Parâmetros de paginação") Pageable pageable) {
+
         List<RestauranteResponseDTO> restaurantes = restauranteService.listarAtivos();
         ApiResponseWrapper<List<RestauranteResponseDTO>> response = ApiResponseWrapper.success(restaurantes,
                 "Busca realizada com sucesso");
+
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por id")
-    @ApiResponses( {
-        @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurante encontrado"),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<RestauranteResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.buscarPorId(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Atualizar restaurante", description = "Atualizar restaurante cadastrado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurante atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<RestauranteResponseDTO> atualizar(@PathVariable Long id,
             @RequestBody @Valid RestauranteRequestDTO dto) {
         return ResponseEntity.ok(restauranteService.atualizar(id, dto));
     }
 
-    @PatchMapping("/{id}/status")
+    @PatchMapping(value = "/{id}/status", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Ativar/Desativar restaurante", description = "Ativa ou desativa o status de um restaurante")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurante atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<RestauranteResponseDTO> atualizarStatus(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.ativarDesativar(id));
     }
 
-    @GetMapping("/nome/{nome}")
+    @GetMapping(value = "/nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por nome")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado com o nome fornecido", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<RestauranteResponseDTO> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(restauranteService.buscarPorNome(nome));
     }
 
-    @GetMapping("/preco/{precoMinimo}/{precoMaximo}")
+    @GetMapping(value = "/preco/{precoMinimo}/{precoMaximo}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorPreco(@PathVariable BigDecimal precoMinimo,
             @PathVariable BigDecimal precoMaximo) {
         List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorPreco(precoMinimo, precoMaximo);
         return ResponseEntity.ok(restaurantes);
     }
 
-    @GetMapping("/categoria/{categoria}")
+    @GetMapping(value = "/categoria/{categoria}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por categoria")
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorCategoria(@PathVariable String categoria) {
         return ResponseEntity.ok(restauranteService.buscarPorCategoria(categoria));
     }
 
-    @PatchMapping("/{id}/inativar")
+    @PatchMapping(value = "/{id}/inativar", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Inativar restaurante", description = "Inativar restaurante (soft delete)")
     public ResponseEntity<RestauranteResponseDTO> inativar(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.inativar(id));
     }
 
-    @GetMapping("/taxa-entrega")
+    @GetMapping(value = "/taxa-entrega", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Listar taxa de entrega menor ou igual")
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorTaxaEntrega(@RequestParam BigDecimal taxa) {
         List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorTaxaEntrega(taxa);
         return ResponseEntity.ok(restaurantes);
     }
 
-    @GetMapping("/top-cinco")
+    @GetMapping(value = "/top-cinco", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Listar os 5 primeiros restaurantes por nome")
     public ResponseEntity<List<RestauranteResponseDTO>> listarTop5PorNome() {
         List<RestauranteResponseDTO> top5Restaurantes = restauranteService.listarTop5PorNome();
         return ResponseEntity.ok(top5Restaurantes);
     }
 
-    @GetMapping("/relatorio-vendas")
+    @GetMapping(value = "/relatorio-vendas", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Relatório de vendas", description = "Relatório de vendas por restaurante")
     public ResponseEntity<List<RelatorioVendas>> relatorioVendasPorRestaurante() {
         List<RelatorioVendas> relatorio = restauranteService.relatorioVendasPorRestaurante();
         return ResponseEntity.ok(relatorio);
     }
 
-    @GetMapping("/{id}/taxa-entrega/{cep}")
+    @GetMapping(value = "/{id}/taxa-entrega/{cep}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calcular taxa de entrega", description = "Calcular taxa de entrega de um restaurante por cep")
     public ResponseEntity<Void> calcularTaxaEntrega(
-        @PathVariable Long id,
-        @PathVariable String cep
-    ) {
+            @PathVariable Long id,
+            @PathVariable String cep) {
         throw new NotImplementedException();
     }
 
-    @GetMapping("/proximos/{cep}")
+    @GetMapping(value = "/proximos/{cep}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurantes próximos", description = "Buscar restaurantes próximos de um cep")
     public ResponseEntity<Void> buscarRestaurantesProximos(
-        @PathVariable String cep
-    ) {
+            @PathVariable String cep) {
         throw new NotImplementedException();
     }
 
-    @GetMapping("/{restauranteId}/produtos")
+    @GetMapping(value = "/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Produtos do restaurante", description = "Buscar produtos por restaurante")
     public ResponseEntity<Void> buscarProdutosPorRestaurante(
-        @PathVariable Long restauranteId
-    ) {
+            @PathVariable Long restauranteId) {
         throw new NotImplementedException();
     }
 
-    @GetMapping("/{restauranteId}/pedidos ")
+    @GetMapping(value = "/{restauranteId}/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Pedidos do restaurante", description = "Buscar pedidos do restaurante")
     public ResponseEntity<Void> buscarPedidosDoRestaurante(
-        @PathVariable Long restauranteId
-    ) {
+            @PathVariable Long restauranteId) {
         throw new NotImplementedException();
     }
 }
