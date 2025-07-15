@@ -1,15 +1,15 @@
 package com.deliverytech.delivery.services.impl;
 
-import com.deliverytech.delivery.dto.restaurante.RestauranteRequestDTO;
-import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
+import com.deliverytech.delivery.dto.request.RestauranteRequestDTO;
+import com.deliverytech.delivery.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery.entity.Restaurante;
 import com.deliverytech.delivery.exception.BusinessException;
+import com.deliverytech.delivery.exception.ConflictException;
+import com.deliverytech.delivery.exception.EntityNotFoundException;
 import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.projection.RelatorioVendas;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 import com.deliverytech.delivery.services.RestauranteService;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class RestauranteServiceImpl implements RestauranteService {
         // Validar nome único
         Optional<Restaurante> byNome = restauranteRepository.findByNome(dto.getNome());
         if (byNome.equals(dto.getNome()))
-            throw new BusinessException(ExceptionMessage.RestauranteJaCadastrado);
+            throw new ConflictException("Restaurante", "nome " + dto.getNome());
 
         Restaurante restaurante = modelMapper.map(dto, Restaurante.class);
         Restaurante restauranteSalvo = restauranteRepository.save(restaurante);
@@ -49,7 +49,7 @@ public class RestauranteServiceImpl implements RestauranteService {
     public RestauranteResponseDTO buscarPorId(Long id) {
 
         Restaurante restaurante = restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante", id));
 
         return modelMapper.map(restaurante, RestauranteResponseDTO.class);
     }
@@ -58,7 +58,7 @@ public class RestauranteServiceImpl implements RestauranteService {
     public RestauranteResponseDTO atualizar(Long id, RestauranteRequestDTO dto) {
 
         Restaurante restaurante = restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante", id));
 
         restaurante.setNome(dto.getNome());
         restaurante.setCategoria(dto.getCategoria());
@@ -76,7 +76,7 @@ public class RestauranteServiceImpl implements RestauranteService {
     public RestauranteResponseDTO ativarDesativar(Long id) {
 
         Restaurante restaurante = restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante", id));
 
         restaurante.setAtivo(!restaurante.getAtivo());
 
@@ -92,10 +92,10 @@ public class RestauranteServiceImpl implements RestauranteService {
         Restaurante restaurante = restauranteRepository.findByNomeAndAtivoTrue(nome);
 
         if (!restaurante.getNome().equalsIgnoreCase(nome))
-            throw new BusinessException(ExceptionMessage.RestauranteNaoEncontrado);
+            throw new EntityNotFoundException("Restaurante", nome);
 
         if (!restaurante.getAtivo())
-            throw new BusinessException(ExceptionMessage.RestauranteInativo);
+            throw new BusinessException(ExceptionMessage.RestauranteInativo, "");
 
         return modelMapper.map(restaurante, RestauranteResponseDTO.class);
     }
@@ -106,7 +106,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         List<Restaurante> restaurantes = restauranteRepository.findByCategoria(categoria);
         if (restaurantes.isEmpty())
-            throw new BusinessException(ExceptionMessage.RestaurantesNaoEncontradosParaCategoria);
+            throw new BusinessException(ExceptionMessage.RestaurantesNaoEncontradosParaCategoria, categoria);
 
         // Converter lista de entidades para lista de DTOs
         return restaurantes.stream()
@@ -122,7 +122,8 @@ public class RestauranteServiceImpl implements RestauranteService {
             throw new BusinessException(
                     MessageFormat.format(ExceptionMessage.RestaurantesNaoEncontradosParaFaixaPreco,
                             precoMinimo,
-                            precoMaximo));
+                            precoMaximo),
+                            "");
         }
 
         return restaurantes.stream()
@@ -136,7 +137,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         List<Restaurante> restaurantes = restauranteRepository.findByAtivoTrue();
         if (restaurantes.isEmpty())
-            throw new BusinessException(ExceptionMessage.NenhumRestauranteEncontrado);
+            throw new BusinessException(ExceptionMessage.NenhumRestauranteEncontrado, "nok");
 
         return restaurantes.stream()
                 .map(restaurante -> modelMapper.map(restaurante, RestauranteResponseDTO.class))
@@ -148,7 +149,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         List<Restaurante> restaurantes = restauranteRepository.findTop5ByOrderByNomeAsc();
         if (restaurantes.isEmpty())
-            throw new BusinessException(ExceptionMessage.NenhumRestauranteEncontrado);
+            throw new BusinessException(ExceptionMessage.NenhumRestauranteEncontrado, "nok");
 
         return restaurantes.stream()
                 .map(restaurante -> modelMapper.map(restaurante, RestauranteResponseDTO.class))
@@ -160,7 +161,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         List<RelatorioVendas> relatorio = restauranteRepository.relatorioVendasPorRestaurante();
         if (relatorio.isEmpty())
-            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada);
+            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada, "nok");
 
         return relatorio;
     }
@@ -171,7 +172,7 @@ public class RestauranteServiceImpl implements RestauranteService {
         List<Restaurante> restaurantes = restauranteRepository.findByTaxaEntregaLessThanEqual(taxaEntrega);
         if (restaurantes.isEmpty()) {
             throw new BusinessException(
-                    MessageFormat.format(ExceptionMessage.RestauranteNaoEncontradosParaPrecoMenor, taxaEntrega));
+                    MessageFormat.format(ExceptionMessage.RestauranteNaoEncontradosParaPrecoMenor, taxaEntrega), "nok");
         }
 
         return restaurantes.stream()
@@ -183,10 +184,10 @@ public class RestauranteServiceImpl implements RestauranteService {
     public RestauranteResponseDTO inativar(Long id) {
 
         Restaurante restaurante = restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado, id));
 
         if (!restaurante.getAtivo())
-            throw new BusinessException(ExceptionMessage.RestauranteJaInativo);
+            throw new BusinessException(ExceptionMessage.RestauranteJaInativo, "nok");
 
         restaurante.setAtivo(false);
 

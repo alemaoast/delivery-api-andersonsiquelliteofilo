@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.dto.cliente;
+package com.deliverytech.delivery.dto.response;
 
 import lombok.Data;
 

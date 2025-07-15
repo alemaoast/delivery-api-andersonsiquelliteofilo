@@ -1,11 +1,8 @@
-package com.deliverytech.delivery.dto.produto;
+package com.deliverytech.delivery.dto.response;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.deliverytech.delivery.dto.pedido.ItemPedidoResponseDTO;
-import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
 
 import lombok.Data;
 

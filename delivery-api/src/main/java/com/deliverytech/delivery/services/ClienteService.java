@@ -2,8 +2,8 @@ package com.deliverytech.delivery.services;
 
 import java.util.List;
 
-import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
-import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
+import com.deliverytech.delivery.dto.request.ClienteRequestDTO;
+import com.deliverytech.delivery.dto.response.ClienteResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 
 public interface ClienteService {

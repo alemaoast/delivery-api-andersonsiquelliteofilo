@@ -1,13 +1,15 @@
-package com.deliverytech.delivery.dto.restaurante;
+package com.deliverytech.delivery.dto.request;
 
 import java.math.BigDecimal;
 
 import com.deliverytech.delivery.exception.ExceptionMessage;
+import com.deliverytech.delivery.validation.ValidCEP;
+import com.deliverytech.delivery.validation.ValidCategoria;
+import com.deliverytech.delivery.validation.ValidTelefone;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -19,17 +21,20 @@ public class RestauranteRequestDTO {
 
   @Schema(description = "Nome do restaurante", example = "Pizzaria Express", required = true)
   @NotBlank(message = ExceptionMessage.NomeObrigatorio)
-   @Size(min = 3, max = 100, message = "O nome do restaurante deve ter entre 3 e 100 caracteres")
+  @Size(min = 2, max = 100, message = "O nome do restaurante deve ter entre 2 e 100 caracteres")
   private String nome;
 
-  @NotBlank(message = ExceptionMessage.CategoriaObrigatoria)
+  @ValidCategoria
   private String categoria;
 
   @NotBlank(message = ExceptionMessage.EnderecoObrigatorio)
   private String endereco;
 
+  @ValidCEP
+  private String cep;
+
   @NotBlank(message = ExceptionMessage.TelefoneObrigatorio)
-  @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = ExceptionMessage.TelefoneInvalido)
+  @ValidTelefone
   private String telefone;
 
   @NotNull(message = ExceptionMessage.TaxaEntregaObrigatoria)

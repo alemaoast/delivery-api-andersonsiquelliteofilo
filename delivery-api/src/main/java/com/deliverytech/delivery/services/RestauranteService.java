@@ -3,8 +3,8 @@ package com.deliverytech.delivery.services;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.deliverytech.delivery.dto.restaurante.RestauranteRequestDTO;
-import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
+import com.deliverytech.delivery.dto.request.RestauranteRequestDTO;
+import com.deliverytech.delivery.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendas;
 
 public interface RestauranteService {

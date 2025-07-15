@@ -5,16 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliverytech.delivery.dto.cliente.ClienteRequestDTO;
-import com.deliverytech.delivery.dto.cliente.ClienteResponseDTO;
+import com.deliverytech.delivery.dto.request.ClienteRequestDTO;
+import com.deliverytech.delivery.dto.response.ClienteResponseDTO;
 import com.deliverytech.delivery.entity.Cliente;
 import com.deliverytech.delivery.exception.BusinessException;
+import com.deliverytech.delivery.exception.ConflictException;
+import com.deliverytech.delivery.exception.EntityNotFoundException;
 import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 import com.deliverytech.delivery.repository.ClienteRepository;
 import com.deliverytech.delivery.services.ClienteService;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +33,7 @@ public class ClienteServiceImpl implements ClienteService {
 
         // Validar email único
         if (clienteRepository.existsByEmail(dto.getEmail()))
-            throw new BusinessException(ExceptionMessage.EmailJaCadastrado);
+            throw new ConflictException("Cliente", "email");
 
         Cliente cliente = modelMapper.map(dto, Cliente.class);
         cliente.setAtivo(true); // Definir como ativo por padrão
@@ -49,7 +49,8 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO buscarPorId(Long id) {
 
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Cliente", id));
 
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
@@ -59,7 +60,8 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO buscarPorEmail(String email) {
 
         Cliente cliente = clienteRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Cliente", email));
 
         return modelMapper.map(cliente, ClienteResponseDTO.class);
     }
@@ -68,12 +70,13 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO dto) {
 
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Cliente", id));
 
         // Verificar se email não está sendo usado por outro cliente
         if (!cliente.getEmail().equals(dto.getEmail()) &&
                 clienteRepository.existsByEmail(dto.getEmail()))
-            throw new BusinessException(ExceptionMessage.EmailJaCadastrado);
+            throw new ConflictException("Cliente", "email");
 
         // Atualizar campos
         cliente.setNome(dto.getNome());
@@ -90,7 +93,8 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO ativarDesativar(Long id) {
 
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Cliente", id));
 
         cliente.setAtivo(!cliente.getAtivo());
 
@@ -125,8 +129,8 @@ public class ClienteServiceImpl implements ClienteService {
 
         List<RelatorioVendasClientes> relatorio = clienteRepository.listarTop5ClientesQueMaisCompram();
         if (relatorio.isEmpty())
-            throw new EntityNotFoundException(ExceptionMessage.NenhumaVendaEncontrada);
-            
+            throw new BusinessException(ExceptionMessage.NenhumaVendaEncontrada, "notfound");
+
         return relatorio;
     }
 }

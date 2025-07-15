@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.deliverytech.delivery.dto.pedido.PedidoResponseDTO;
+import com.deliverytech.delivery.dto.response.PedidoResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendas;
 import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 import com.deliverytech.delivery.projection.RelatorioVendasProdutos;

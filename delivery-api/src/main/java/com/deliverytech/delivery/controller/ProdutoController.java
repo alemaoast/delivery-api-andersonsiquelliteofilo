@@ -1,7 +1,7 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.dto.produto.ProdutoRequestDTO;
-import com.deliverytech.delivery.dto.produto.ProdutoResponseDTO;
+import com.deliverytech.delivery.dto.request.ProdutoRequestDTO;
+import com.deliverytech.delivery.dto.response.ProdutoResponseDTO;
 import com.deliverytech.delivery.services.impl.ProdutoServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;

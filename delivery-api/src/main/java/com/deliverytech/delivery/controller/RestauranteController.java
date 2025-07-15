@@ -1,13 +1,16 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.dto.ApiResponseWrapper;
-import com.deliverytech.delivery.dto.restaurante.RestauranteRequestDTO;
-import com.deliverytech.delivery.dto.restaurante.RestauranteResponseDTO;
+import com.deliverytech.delivery.dto.request.RestauranteRequestDTO;
+import com.deliverytech.delivery.dto.response.ApiResponseWrapper;
+import com.deliverytech.delivery.dto.response.ErrorResponseDTO;
+import com.deliverytech.delivery.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendas;
 import com.deliverytech.delivery.services.impl.RestauranteServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,6 +70,9 @@ public class RestauranteController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por id")
+    @ApiResponses( {
+        @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<RestauranteResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.buscarPorId(id));
     }

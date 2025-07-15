@@ -1,8 +1,8 @@
 package com.deliverytech.delivery.services.impl;
 
-import com.deliverytech.delivery.dto.pedido.ItemPedidoRequestDTO;
-import com.deliverytech.delivery.dto.pedido.PedidoRequestDTO;
-import com.deliverytech.delivery.dto.pedido.PedidoResponseDTO;
+import com.deliverytech.delivery.dto.request.ItemPedidoRequestDTO;
+import com.deliverytech.delivery.dto.request.PedidoRequestDTO;
+import com.deliverytech.delivery.dto.response.PedidoResponseDTO;
 import com.deliverytech.delivery.entity.Cliente;
 import com.deliverytech.delivery.entity.ItemPedido;
 import com.deliverytech.delivery.entity.Pedido;
@@ -57,14 +57,14 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ClienteNaoEncontrado));
 
         if (!cliente.getAtivo())
-            throw new BusinessException(ExceptionMessage.ClienteInativo);
+            throw new BusinessException(ExceptionMessage.ClienteInativo, "entity.status");
 
         // 2. Validar restaurante existe e está ativo
         Restaurante restaurante = restauranteRepository.findById(dto.getRestauranteId())
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.RestauranteNaoEncontrado));
 
         if (!restaurante.getAtivo())
-            throw new BusinessException(ExceptionMessage.RestauranteNaoDisponivel);
+            throw new BusinessException(ExceptionMessage.RestauranteNaoDisponivel, "entity.status");
 
         // TODO: validar se restaurante entrega no endereço
 
@@ -78,10 +78,10 @@ public class PedidoServiceImpl implements PedidoService {
                     .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ProdutoNaoEncontrado));
 
             if (!produto.getDisponivel())
-                throw new BusinessException(ExceptionMessage.ProdutoNaoDisponivel);
+                throw new BusinessException(ExceptionMessage.ProdutoNaoDisponivel, "entity.status");
 
             if (!produto.getRestaurante().getId().equals(dto.getRestauranteId()))
-                throw new BusinessException(ExceptionMessage.ProdutoNaoPertenceAoRestaurante);
+                throw new BusinessException(ExceptionMessage.ProdutoNaoPertenceAoRestaurante, "nok");
 
             // Criar item do pedido
             ItemPedido item = new ItemPedido();
@@ -156,7 +156,7 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.PedidoNaoEncontrado));
 
         if (!isTransicaoValida(StatusPedido.valueOf(pedido.getStatus()), status))
-            throw new BusinessException(ExceptionMessage.TransicaoStatusPedidoInvalida);
+            throw new BusinessException(ExceptionMessage.TransicaoStatusPedidoInvalida, "nok");
 
         pedido.setStatus(status.name());
 
@@ -186,10 +186,10 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.PedidoNaoEncontrado));
 
         if (!pedido.getStatus().equals(StatusPedido.CANCELADO.name()))
-            throw new BusinessException(ExceptionMessage.PedidoJaCancelado);
+            throw new BusinessException(ExceptionMessage.PedidoJaCancelado, "nok");
 
         if (!podeSerCancelado(StatusPedido.valueOf(pedido.getStatus())))
-            throw new BusinessException(ExceptionMessage.PedidoNaoPodeSerCancelado + pedido.getStatus());
+            throw new BusinessException(ExceptionMessage.PedidoNaoPodeSerCancelado + pedido.getStatus(), "nok");
 
         pedido.setStatus(StatusPedido.CANCELADO.name());
 
@@ -204,11 +204,11 @@ public class PedidoServiceImpl implements PedidoService {
 
         // A data de inicio não pode ser antes do delivery existir
         if (inicio.equals(LocalDate.of(2024, 12, 31)))
-            throw new BusinessException("Data de inicio inválida");
+            throw new BusinessException("Data de inicio inválida", "nok");
 
         // A data de fim não pode ser futura
         if (fim.equals(LocalDateTime.now().plusDays(1)))
-            throw new BusinessException("Data fim inválida");
+            throw new BusinessException("Data fim inválida", "nok");
 
         List<Pedido> pedidos = pedidoRepository.findByDataPedidoBetween(inicio.atStartOfDay(),
                 fim.atTime(LocalTime.of(23, 59)));

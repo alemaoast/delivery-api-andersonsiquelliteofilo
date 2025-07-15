@@ -1,7 +1,7 @@
 package com.deliverytech.delivery.services.impl;
 
-import com.deliverytech.delivery.dto.produto.ProdutoRequestDTO;
-import com.deliverytech.delivery.dto.produto.ProdutoResponseDTO;
+import com.deliverytech.delivery.dto.request.ProdutoRequestDTO;
+import com.deliverytech.delivery.dto.response.ProdutoResponseDTO;
 import com.deliverytech.delivery.entity.Produto;
 import com.deliverytech.delivery.entity.Restaurante;
 import com.deliverytech.delivery.exception.BusinessException;
@@ -100,7 +100,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         Produto produto = produtoRepository.findByNome(nome);
 
         if (!produto.getDisponivel())
-            throw new BusinessException(ExceptionMessage.ProdutoNaoDisponivel);
+            throw new BusinessException(ExceptionMessage.ProdutoNaoDisponivel, "nok");
 
         return modelMapper.map(produto, ProdutoResponseDTO.class);
     }
@@ -112,7 +112,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.findByRestauranteId(restauranteId);
 
         if (produtos.isEmpty() || produtos.stream().noneMatch(Produto::getDisponivel))
-            throw new BusinessException(ExceptionMessage.ProdutosNaoEncontradosParaRestaurante);
+            throw new EntityNotFoundException(ExceptionMessage.ProdutosNaoEncontradosParaRestaurante);
 
         return produtos.stream()
                 .filter(Produto::getDisponivel)
@@ -127,7 +127,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.findByCategoria(categoria);
 
         if (produtos.isEmpty())
-            throw new BusinessException(ExceptionMessage.ProdutosNaoEncontradosParaCategoria);
+            throw new EntityNotFoundException(ExceptionMessage.ProdutosNaoEncontradosParaCategoria);
 
         return produtos.stream()
                 .map(p -> modelMapper.map(p, ProdutoResponseDTO.class))
@@ -141,7 +141,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.findByPrecoLessThanEqual(precoMaximo);
 
         if (produtos.isEmpty())
-            throw new BusinessException(
+            throw new EntityNotFoundException(
                     MessageFormat.format(ExceptionMessage.ProdutosNaoEncontradosParaFaixaPreco,
                             precoMinimo,
                             precoMaximo));
@@ -159,7 +159,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.findAll();
 
         if (produtos.isEmpty())
-            throw new BusinessException(ExceptionMessage.NenhumProdutoEncontrado);
+            throw new EntityNotFoundException(ExceptionMessage.NenhumProdutoEncontrado);
 
         return produtos.stream()
                 .map(p -> modelMapper.map(p, ProdutoResponseDTO.class))
@@ -173,7 +173,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         List<Produto> produtos = produtoRepository.findByPrecoLessThanEqual(valor);
 
         if (produtos.isEmpty())
-            throw new BusinessException(
+            throw new EntityNotFoundException(
                     MessageFormat.format(ExceptionMessage.ProdutosNaoEncontradosParaPrecoMenor, valor));
 
         return produtos.stream()
