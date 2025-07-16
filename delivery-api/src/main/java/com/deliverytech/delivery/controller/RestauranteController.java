@@ -118,6 +118,11 @@ public class RestauranteController {
     }
 
     @GetMapping(value = "/preco/{precoMinimo}/{precoMaximo}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por taxa de entrega")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado para taxa de entrega", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorPreco(@PathVariable BigDecimal precoMinimo,
             @PathVariable BigDecimal precoMaximo) {
         List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorPreco(precoMinimo, precoMaximo);
@@ -126,18 +131,30 @@ public class RestauranteController {
 
     @GetMapping(value = "/categoria/{categoria}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Buscar restaurante por categoria")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado para categoria fornecida", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorCategoria(@PathVariable String categoria) {
         return ResponseEntity.ok(restauranteService.buscarPorCategoria(categoria));
     }
 
     @PatchMapping(value = "/{id}/inativar", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Inativar restaurante", description = "Inativar restaurante (soft delete)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes inativado"),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<RestauranteResponseDTO> inativar(@PathVariable Long id) {
         return ResponseEntity.ok(restauranteService.inativar(id));
     }
 
     @GetMapping(value = "/taxa-entrega", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Listar taxa de entrega menor ou igual")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<List<RestauranteResponseDTO>> buscarPorTaxaEntrega(@RequestParam BigDecimal taxa) {
         List<RestauranteResponseDTO> restaurantes = restauranteService.buscarPorTaxaEntrega(taxa);
         return ResponseEntity.ok(restaurantes);
@@ -145,6 +162,10 @@ public class RestauranteController {
 
     @GetMapping(value = "/top-cinco", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar restaurante", description = "Listar os 5 primeiros restaurantes por nome")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurantes encontrados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<List<RestauranteResponseDTO>> listarTop5PorNome() {
         List<RestauranteResponseDTO> top5Restaurantes = restauranteService.listarTop5PorNome();
         return ResponseEntity.ok(top5Restaurantes);
@@ -152,6 +173,10 @@ public class RestauranteController {
 
     @GetMapping(value = "/relatorio-vendas", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Relatório de vendas", description = "Relatório de vendas por restaurante")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Relatório de vendas gerado"),
+            @ApiResponse(responseCode = "404", description = "Nenhuma venda realizada", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
     public ResponseEntity<List<RelatorioVendas>> relatorioVendasPorRestaurante() {
         List<RelatorioVendas> relatorio = restauranteService.relatorioVendasPorRestaurante();
         return ResponseEntity.ok(relatorio);
