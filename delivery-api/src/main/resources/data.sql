@@ -47,3 +47,11 @@ INSERT INTO item_pedido (quantidade, preco_unitario, subtotal, pedido_id, produt
 (1, 45.90, 45.90, 3, 7), -- Combo Sashimi no pedido 3
 (1, 32.90, 32.90, 3, 8), -- Hot Roll Salmão no pedido 3
 (1, 15.90, 15.90, 3, 9); -- Temaki Atum no pedido 3
+
+-- Inserir usuarios no banco de dados
+-- Senha para todos: "123456"
+INSERT INTO usuario (id, nome, email, senha, role, ativo, data_criacao, restaurante_id) VALUES
+(1, 'Admin Sistema', 'admin@delivery.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iKXulpZR8J4OY6Nd4EMCFyZw4ufC', 'ADMIN', true, NOW(), null),
+(2, 'João Cliente', 'joao@email.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iKXulpZR8J4OY6Nd4EMCFyZw4ufC', 'CLIENTE', true, NOW(), null),
+(3, 'Pizza Palace', 'pizza@palace.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iKXulpZR8J4OY6Nd4EMCFyZw4ufC', 'RESTAURANTE', true, NOW(), 1),
+(4, 'Carlos Entregador', 'carlos@entrega.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iKXulpZR8J4OY6Nd4EMCFyZw4ufC', 'ENTREGADOR', true, NOW(), null);    

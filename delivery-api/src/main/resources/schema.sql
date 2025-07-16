@@ -57,3 +57,15 @@ CREATE TABLE item_pedido (
     FOREIGN KEY (pedido_id) REFERENCES pedido(id),
     FOREIGN KEY (produto_id) REFERENCES produto(id)
 );
+
+CREATE TABLE usuario (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  role VARCHAR(100) NOT NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  restaurante_id BIGINT,
+  FOREIGN KEY (restaurante_id) REFERENCES restaurante(id)
+);
