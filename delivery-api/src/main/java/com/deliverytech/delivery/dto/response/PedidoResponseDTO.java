@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+@Schema(
+    description = "Resposta quando criar ou atualizar um pedido",
+    title = "Pedido Response DTO")
 @Data
 public class PedidoResponseDTO {
   private Long id;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.deliverytech.delivery.exception.ExceptionMessage;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@Schema(
+    description = "Dados necessários para criar ou atualizar um produto",
+    title = "Produto Request DTO")
 public class ProdutoRequestDTO {
 
   @NotBlank(message = ExceptionMessage.NomeObrigatorio)

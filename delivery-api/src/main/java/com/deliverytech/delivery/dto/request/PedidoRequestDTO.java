@@ -6,6 +6,7 @@ import java.util.List;
 import com.deliverytech.delivery.exception.ExceptionMessage;
 import com.deliverytech.delivery.validation.ValidCEP;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,6 +15,9 @@ import jakarta.validation.constraints.Past;
 import lombok.Data;
 
 @Data
+@Schema(
+    description = "Dados necessários para criar ou atualizar um pedido",
+    title = "Pedido Request DTO")
 public class PedidoRequestDTO {
 
   @NotBlank(message = ExceptionMessage.NumeroPedidoObrigatorio)

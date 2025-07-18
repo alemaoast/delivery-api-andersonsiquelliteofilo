@@ -1,9 +1,14 @@
 package com.deliverytech.delivery.dto.response;
 
 import com.deliverytech.delivery.entity.Usuario;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+@Schema(
+    description = "Resposta quando criar um usuario",
+    title = "User Response DTO")
 @Data
 @Builder
 public class UserResponseDTO {
