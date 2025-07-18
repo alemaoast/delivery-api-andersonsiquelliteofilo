@@ -1,19 +1,12 @@
 package com.deliverytech.delivery.services.impl;
 
 import com.deliverytech.delivery.services.UsuarioService;
-import com.deliverytech.delivery.dto.request.LoginRequestDTO;
 import com.deliverytech.delivery.dto.request.RegisterRequestDTO;
-import com.deliverytech.delivery.dto.response.LoginResponseDTO;
-import com.deliverytech.delivery.dto.response.UserResponseDTO;
 import com.deliverytech.delivery.entity.Usuario;
 import com.deliverytech.delivery.repository.UsuarioRepository;
-import com.deliverytech.delivery.security.JwtUtil;
-import com.deliverytech.delivery.security.SecurityUtils;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +31,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         usuario.setAtivo(true);
         usuario.setDataCriacao(LocalDateTime.now());
-        
+
         return usuarioRepository.save(usuario);
     }
 
@@ -66,7 +59,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private void validarEmailUnico(String email) {
         if (existePorEmail(email)) {
-            throw new RuntimeException("Email já cadastrado: " + email);
+            // Mensagem genérica para previnir ataques de enumeração do usuários.
+            throw new RuntimeException("Erro, verificar com administrador da plataforma.");
         }
     }
 }
