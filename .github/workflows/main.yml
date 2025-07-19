@@ -19,5 +19,6 @@ jobs:
           cd delivery-api
           mvn clean package
       - name: Deploy to server
-        run: scp target/app.jar user@server:/app/
+        run: scp delivery-api/target/*.jar user@server:/app/
+
       
