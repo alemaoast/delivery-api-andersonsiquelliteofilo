@@ -1,0 +1,22 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+      - name: Build with Maven
+        run: |
+          cd delivery-api
+          mvn clean package
+      - name: Deploy to server
+        run: scp target/app.jar user@server:/app/
+      
