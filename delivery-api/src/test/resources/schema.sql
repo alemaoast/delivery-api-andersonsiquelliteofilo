@@ -1,4 +1,4 @@
-CREATE TABLE cliente (
+CREATE TABLE IF NOT EXISTS cliente (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE cliente (
     ativo BOOLEAN
 );
 
-CREATE TABLE restaurante (
+CREATE TABLE IF NOT EXISTS restaurante (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     categoria VARCHAR(50),
@@ -19,7 +19,7 @@ CREATE TABLE restaurante (
     ativo BOOLEAN
 );
 
-CREATE TABLE produto (
+CREATE TABLE IF NOT EXISTS produto (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     descricao VARCHAR(200),
@@ -30,7 +30,7 @@ CREATE TABLE produto (
     FOREIGN KEY (restaurante_id) REFERENCES restaurante(id)
 );
 
-CREATE TABLE pedido (
+CREATE TABLE IF NOT EXISTS pedido (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     numero_pedido VARCHAR(20) NOT NULL,
     data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,7 +47,7 @@ CREATE TABLE pedido (
     FOREIGN KEY (restaurante_id) REFERENCES restaurante(id)
 );
 
-CREATE TABLE item_pedido (
+CREATE TABLE IF NOT EXISTS item_pedido (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     quantidade INT NOT NULL,
     preco_unitario DECIMAL(19,2) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE item_pedido (
     FOREIGN KEY (produto_id) REFERENCES produto(id)
 );
 
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
