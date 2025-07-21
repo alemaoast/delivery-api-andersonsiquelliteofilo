@@ -35,7 +35,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         // Validar nome único
         Optional<Restaurante> byNome = restauranteRepository.findByNome(dto.getNome());
-        if (byNome != null && byNome.get().getNome().equals(dto.getNome()))
+        if (byNome.isPresent() && byNome.get().getNome().equals(dto.getNome()))
             throw new ConflictException("Restaurante", "nome " + dto.getNome());
 
         Restaurante restaurante = modelMapper.map(dto, Restaurante.class);
