@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +21,9 @@ import com.deliverytech.delivery.exception.ConflictException;
 import com.deliverytech.delivery.exception.EntityNotFoundException;
 import com.deliverytech.delivery.projection.RelatorioVendasClientes;
 import com.deliverytech.delivery.repository.ClienteRepository;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -46,13 +48,13 @@ public class ClienteServiceTest {
                                 request.getTelefone(), request.getTelefone(), LocalDateTime.now(),
                                 true, null);
 
-                Mockito.when(clienteRepository.save(Mockito.any(Cliente.class)))
+                when(clienteRepository.save(any(Cliente.class)))
                                 .thenReturn(clienteMock);
 
                 ClienteResponseDTO resultado = clienteService.cadastrar(request);
 
-                Assertions.assertNotNull(resultado);
-                Assertions.assertEquals("teste", resultado.getNome());
+                assertNotNull(resultado);
+                assertEquals("teste", resultado.getNome());
         }
 
         @Test
@@ -64,12 +66,12 @@ public class ClienteServiceTest {
                 request.setNome("teste");
                 request.setTelefone("123456789");
 
-                Mockito.when(clienteRepository.existsByEmail(request.getEmail())).thenReturn(true);
+                when(clienteRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
-                var result = Assertions.assertThrows(ConflictException.class,
+                var result = assertThrows(ConflictException.class,
                                 () -> clienteService.cadastrar(request));
 
-                Assertions.assertEquals("Cliente com email já existe", result.getMessage());
+                assertEquals("Cliente com email já existe", result.getMessage());
         }
 
         @Test
@@ -77,10 +79,10 @@ public class ClienteServiceTest {
         void testBuscarClientePorId_DeveRetornarClienteResponseDTO() {
                 Cliente clienteMock = new Cliente(1L, "teste", "teste@email.com", "123456789",
                                 "Av Teste", LocalDateTime.now(), true, null);
-                Mockito.when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
+                when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
                 ClienteResponseDTO resultado = clienteService.buscarPorId(1L);
-                Assertions.assertNotNull(resultado);
-                Assertions.assertEquals("teste", resultado.getNome());
+                assertNotNull(resultado);
+                assertEquals("teste", resultado.getNome());
         }
 
         @Test
@@ -88,12 +90,12 @@ public class ClienteServiceTest {
         void testBuscarClientePorEmail_DeveRetornarClienteResponseDTO() {
                 Cliente clienteMock = new Cliente(1L, "teste", "teste@email.com", "123456789",
                                 "Av Teste", LocalDateTime.now(), true, null);
-                Mockito.when(clienteRepository.findByEmail(clienteMock.getEmail()))
+                when(clienteRepository.findByEmail(clienteMock.getEmail()))
                                 .thenReturn(Optional.of(clienteMock));
                 ClienteResponseDTO resultado =
                                 clienteService.buscarPorEmail(clienteMock.getEmail());
-                Assertions.assertNotNull(resultado);
-                Assertions.assertEquals("teste@email.com", resultado.getEmail());
+                assertNotNull(resultado);
+                assertEquals("teste@email.com", resultado.getEmail());
         }
 
         @Test
@@ -109,16 +111,16 @@ public class ClienteServiceTest {
                                 request.getTelefone(), request.getTelefone(), LocalDateTime.now(),
                                 true, null);
 
-                Mockito.when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
-                Mockito.when(clienteRepository.existsByEmail(clienteMock.getEmail()))
+                when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
+                when(clienteRepository.existsByEmail(clienteMock.getEmail()))
                                 .thenReturn(false);
-                Mockito.when(clienteRepository.save(Mockito.any(Cliente.class)))
+                when(clienteRepository.save(any(Cliente.class)))
                                 .thenReturn(clienteMock);
 
                 ClienteResponseDTO resultado = clienteService.atualizar(1L, request);
 
-                Assertions.assertNotNull(resultado);
-                Assertions.assertEquals("teste", resultado.getNome());
+                assertNotNull(resultado);
+                assertEquals("teste", resultado.getNome());
         }
 
         @Test
@@ -134,16 +136,16 @@ public class ClienteServiceTest {
                                 request.getTelefone(), request.getTelefone(), LocalDateTime.now(),
                                 true, null);
 
-                Mockito.when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
+                when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
                 clienteMock.setEmail("teste@email.com2");
-                Mockito.when(clienteRepository.existsByEmail(request.getEmail())).thenReturn(true);
-                Mockito.when(clienteRepository.save(Mockito.any(Cliente.class)))
+                when(clienteRepository.existsByEmail(request.getEmail())).thenReturn(true);
+                when(clienteRepository.save(any(Cliente.class)))
                                 .thenReturn(clienteMock);
 
-                var result = Assertions.assertThrows(ConflictException.class,
+                var result = assertThrows(ConflictException.class,
                                 () -> clienteService.atualizar(1L, request));
 
-                Assertions.assertEquals("Cliente com email já existe", result.getMessage());
+                assertEquals("Cliente com email já existe", result.getMessage());
         }
 
         @Test
@@ -159,15 +161,15 @@ public class ClienteServiceTest {
                                 request.getTelefone(), request.getTelefone(), LocalDateTime.now(),
                                 true, null);
 
-                Mockito.when(clienteRepository.existsByEmail(clienteMock.getEmail()))
+                when(clienteRepository.existsByEmail(clienteMock.getEmail()))
                                 .thenReturn(true);
-                Mockito.when(clienteRepository.save(Mockito.any(Cliente.class)))
+                when(clienteRepository.save(any(Cliente.class)))
                                 .thenReturn(clienteMock);
 
-                var result = Assertions.assertThrows(EntityNotFoundException.class,
+                var result = assertThrows(EntityNotFoundException.class,
                                 () -> clienteService.atualizar(1L, request));
 
-                Assertions.assertEquals("Cliente com ID 1 não encontrado", result.getMessage());
+                assertEquals("Cliente com ID 1 não encontrado", result.getMessage());
         }
 
         @Test
@@ -177,22 +179,22 @@ public class ClienteServiceTest {
                 Cliente clienteMock = new Cliente(1L, "teste", "teste@email.com", "123456789",
                                 "Av Teste", LocalDateTime.now(), true, null);
 
-                Mockito.when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
-                Mockito.when(clienteRepository.save(Mockito.any(Cliente.class)))
+                when(clienteRepository.findById(1L)).thenReturn(Optional.of(clienteMock));
+                when(clienteRepository.save(any(Cliente.class)))
                                 .thenReturn(clienteMock);
                 var result = clienteService.ativarDesativar(1L);
 
-                Assertions.assertEquals(false, result.getAtivo());
+                assertEquals(false, result.getAtivo());
         }
 
         @Test
         @DisplayName("Ativar / Desativar um cliente deve retornar erro cliente não foi encontrado")
         void testToggleStatusCliente_DeveRetornarErroNaoEncontrado() {
 
-                var result = Assertions.assertThrows(EntityNotFoundException.class,
+                var result = assertThrows(EntityNotFoundException.class,
                                 () -> clienteService.ativarDesativar(1L));
 
-                Assertions.assertEquals("Cliente com ID 1 não encontrado", result.getMessage());
+                assertEquals("Cliente com ID 1 não encontrado", result.getMessage());
         }
 
         @Test
@@ -203,10 +205,10 @@ public class ClienteServiceTest {
                                 List.of(new Cliente(1L, "teste", "teste@email.com", "123456789",
                                                 "Av Teste", LocalDateTime.now(), true, null));
 
-                Mockito.when(clienteRepository.findByAtivoTrue()).thenReturn(clientesAtivosMock);
+                when(clienteRepository.findByAtivoTrue()).thenReturn(clientesAtivosMock);
                 var result = clienteService.listarAtivos();
 
-                Assertions.assertEquals(1, result.size());
+                assertEquals(1, result.size());
         }
 
         @Test
@@ -219,11 +221,11 @@ public class ClienteServiceTest {
                                 new Cliente(2L, "teste novo", "teste@email2.com", "123456789",
                                                 "Av Teste", LocalDateTime.now(), false, null));
 
-                Mockito.when(clienteRepository.findByNomeContainingIgnoreCase("tEste"))
+                when(clienteRepository.findByNomeContainingIgnoreCase("tEste"))
                                 .thenReturn(clientesMock);
                 var result = clienteService.buscarPorNome("tEste");
 
-                Assertions.assertEquals(2, result.size());
+                assertEquals(2, result.size());
         }
 
         @Test
@@ -231,7 +233,7 @@ public class ClienteServiceTest {
         void testListarPorNome_DeveRetornarVazio() {
 
                 var result = clienteService.buscarPorNome("tEste");
-                Assertions.assertEquals(0, result.size());
+                assertEquals(0, result.size());
         }
 
         @Test
@@ -239,32 +241,32 @@ public class ClienteServiceTest {
         void testListarClientesAtivos_DeveRetornarVazio() {
 
                 var result = clienteService.listarAtivos();
-                Assertions.assertEquals(0, result.size());
+                assertEquals(0, result.size());
         }
 
         @Test
         @DisplayName("Listar clientes que realizam mais pedidos deve retornar uma lista de relatório de vendas")
         void testListarTop5ClientesRealizamMaisPedidos_DeveRetornarListaRelatorioVendasClientes() {
 
-                RelatorioVendasClientes relatorio1 = Mockito.mock(RelatorioVendasClientes.class);
-                RelatorioVendasClientes relatorio2 = Mockito.mock(RelatorioVendasClientes.class);
+                RelatorioVendasClientes relatorio1 = mock(RelatorioVendasClientes.class);
+                RelatorioVendasClientes relatorio2 = mock(RelatorioVendasClientes.class);
 
                 List<RelatorioVendasClientes> relatrioVendasMock = List.of(relatorio1, relatorio2);
 
-                Mockito.when(clienteRepository.listarTop5ClientesQueMaisCompram())
+                when(clienteRepository.listarTop5ClientesQueMaisCompram())
                                 .thenReturn(relatrioVendasMock);
                 var result = clienteService.listarTop5RealizamMaisPedidos();
 
-                Assertions.assertEquals(2, result.size());
+                assertEquals(2, result.size());
         }
 
         @Test
         @DisplayName("Listar clientes que realizam mais pedidos deve retornar erro nenhuma venda encontrada")
         void testListarTop5ClientesRealizamMaisPedidos_DeveRetornarErroNenhumaVendaEncontrada() {
 
-                var result = Assertions.assertThrows(BusinessException.class,
+                var result = assertThrows(BusinessException.class,
                                 () -> clienteService.listarTop5RealizamMaisPedidos());
 
-                Assertions.assertEquals("Nenhum dado de vendas encontrado.", result.getMessage());
+                assertEquals("Nenhum dado de vendas encontrado.", result.getMessage());
         }
 }
