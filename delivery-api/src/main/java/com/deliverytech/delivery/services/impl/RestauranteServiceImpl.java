@@ -35,7 +35,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         // Validar nome único
         Optional<Restaurante> byNome = restauranteRepository.findByNome(dto.getNome());
-        if (byNome.equals(dto.getNome()))
+        if (byNome != null && byNome.get().getNome().equals(dto.getNome()))
             throw new ConflictException("Restaurante", "nome " + dto.getNome());
 
         Restaurante restaurante = modelMapper.map(dto, Restaurante.class);
@@ -91,7 +91,7 @@ public class RestauranteServiceImpl implements RestauranteService {
 
         Restaurante restaurante = restauranteRepository.findByNomeAndAtivoTrue(nome);
 
-        if (!restaurante.getNome().equalsIgnoreCase(nome))
+        if (restaurante == null || !restaurante.getNome().equalsIgnoreCase(nome))
             throw new EntityNotFoundException("Restaurante", nome);
 
         if (!restaurante.getAtivo())
