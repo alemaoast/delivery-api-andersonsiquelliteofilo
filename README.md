@@ -25,6 +25,12 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 3. Execute: `./mvnw spring-boot:run`
 4. Acesse: http://localhost:8080/health
 
+## 🧪 Como executar os testes unitários
+
+1. Execute: `./mvnw test`
+1. Para obter a cobertura de teste, execute: `./mvnw clean test jacoco:report`
+- Após executado, o arquivo de saída da covertura de teste estará em: `target > site > jacoco > index.html`
+
 ## 📋 Endpoints
 
 - GET /health - Status da aplicação (inclui versão Java)
