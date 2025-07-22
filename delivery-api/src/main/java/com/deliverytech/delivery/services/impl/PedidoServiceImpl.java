@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: mudar o EntityNotFoundException para o da nossa api
 @Service
 public class PedidoServiceImpl implements PedidoService {
 
@@ -185,7 +186,7 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.PedidoNaoEncontrado));
 
-        if (!pedido.getStatus().equals(StatusPedido.CANCELADO.name()))
+        if (pedido.getStatus().equals(StatusPedido.CANCELADO.name()))
             throw new BusinessException(ExceptionMessage.PedidoJaCancelado, "nok");
 
         if (!podeSerCancelado(StatusPedido.valueOf(pedido.getStatus())))
