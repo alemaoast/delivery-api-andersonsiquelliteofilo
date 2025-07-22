@@ -14,7 +14,7 @@ import com.deliverytech.delivery.repository.ClienteRepository;
 import com.deliverytech.delivery.repository.PedidoRepository;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.repository.RestauranteRepository;
-
+import com.deliverytech.delivery.services.impl.PedidoServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 public class PedidoServiceTest {
 
     @Autowired
-    private PedidoService pedidoService;
+    private PedidoServiceImpl pedidoService;
 
     @MockitoBean
     private PedidoRepository pedidoRepository;
