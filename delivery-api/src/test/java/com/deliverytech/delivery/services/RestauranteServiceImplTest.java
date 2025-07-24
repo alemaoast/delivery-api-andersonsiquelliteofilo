@@ -14,6 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.math.BigDecimal;
 import java.util.List;
@@ -209,18 +212,18 @@ public class RestauranteServiceImplTest {
 
     @Test
     void deveListarAtivosComSucesso() {
-        when(restauranteRepository.findByAtivoTrue()).thenReturn(List.of(restaurante));
+        when(restauranteRepository.findByAtivoTrue(PageRequest.of(0,1))).thenReturn(new PageImpl<>(List.of(restaurante)));
 
-        List<RestauranteResponseDTO> response = restauranteService.listarAtivos();
+        Page<RestauranteResponseDTO> response = restauranteService.listarAtivos(0,1);
 
         assertFalse(response.isEmpty());
     }
 
     @Test
     void deveLancarBusinessExceptionAoListarAtivosSemResultados() {
-        when(restauranteRepository.findByAtivoTrue()).thenReturn(List.of());
+        when(restauranteRepository.findByAtivoTrue(PageRequest.of(0,1))).thenReturn(new PageImpl<>(List.of(restaurante)));
 
-        assertThrows(BusinessException.class, () -> restauranteService.listarAtivos());
+        assertThrows(BusinessException.class, () -> restauranteService.listarAtivos(0,1));
     }
 
     @Test

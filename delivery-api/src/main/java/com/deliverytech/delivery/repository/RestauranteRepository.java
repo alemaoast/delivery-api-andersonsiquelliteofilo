@@ -3,7 +3,8 @@ package com.deliverytech.delivery.repository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
     Restaurante findByNomeAndAtivoTrue(String nome);
 
     // Buscar restaurante ativos
-    List<Restaurante> findByAtivoTrue();
+    Page<Restaurante> findByAtivoTrue(Pageable pageable);
 
     // Buscar restaurante por categoria
     List<Restaurante> findByCategoria(String categoria);

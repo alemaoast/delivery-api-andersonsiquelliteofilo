@@ -2,7 +2,7 @@ package com.deliverytech.delivery.services;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+import org.springframework.data.domain.Page;
 import com.deliverytech.delivery.dto.request.RestauranteRequestDTO;
 import com.deliverytech.delivery.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendas;
@@ -23,7 +23,7 @@ public interface RestauranteService {
 
   List<RestauranteResponseDTO> buscarPorPreco(BigDecimal precoMinimo, BigDecimal precoMaximo);
 
-  List<RestauranteResponseDTO> listarAtivos();
+  Page<RestauranteResponseDTO> listarAtivos(int page, int size);
 
   List<RestauranteResponseDTO> listarTop5PorNome();
 

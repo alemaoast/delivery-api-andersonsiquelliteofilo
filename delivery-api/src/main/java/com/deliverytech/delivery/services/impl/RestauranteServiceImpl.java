@@ -13,6 +13,8 @@ import com.deliverytech.delivery.services.RestauranteService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,15 +135,13 @@ public class RestauranteServiceImpl implements RestauranteService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RestauranteResponseDTO> listarAtivos() {
+    public Page<RestauranteResponseDTO> listarAtivos(int page, int size) {
 
-        List<Restaurante> restaurantes = restauranteRepository.findByAtivoTrue();
+        Page<Restaurante> restaurantes = restauranteRepository.findByAtivoTrue(PageRequest.of(page, size));
         if (restaurantes.isEmpty())
             throw new BusinessException(ExceptionMessage.NenhumRestauranteEncontrado, "nok");
 
-        return restaurantes.stream()
-                .map(restaurante -> modelMapper.map(restaurante, RestauranteResponseDTO.class))
-                .toList();
+        return restaurantes.map(r -> modelMapper.map(r, RestauranteResponseDTO.class));
     }
 
     @Override

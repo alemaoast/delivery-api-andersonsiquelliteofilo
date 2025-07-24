@@ -1,12 +1,12 @@
 package com.deliverytech.delivery.controller;
 
 import com.deliverytech.delivery.dto.request.RestauranteRequestDTO;
-import com.deliverytech.delivery.dto.response.ApiResponseWrapper;
 import com.deliverytech.delivery.dto.response.ErrorResponseDTO;
+import com.deliverytech.delivery.dto.response.PagedResponse;
 import com.deliverytech.delivery.dto.response.RestauranteResponseDTO;
 import com.deliverytech.delivery.projection.RelatorioVendas;
 import com.deliverytech.delivery.services.impl.RestauranteServiceImpl;
-
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,13 +65,15 @@ public class RestauranteController {
             @ApiResponse(responseCode = "200", description = "Lista de restaurantes recuperada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhum restaurante encontrado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
     })
-    public ResponseEntity<ApiResponseWrapper<List<RestauranteResponseDTO>>> listar(
+    @Timed(value = "restaurante.buscar", histogram = true)
+    public ResponseEntity<PagedResponse<RestauranteResponseDTO>> listarPaginado(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
             @Parameter(description = "Parâmetros de paginação") Pageable pageable) {
 
-        List<RestauranteResponseDTO> restaurantes = restauranteService.listarAtivos();
-        ApiResponseWrapper<List<RestauranteResponseDTO>> response = ApiResponseWrapper.success(restaurantes,
-                "Busca realizada com sucesso");
+        Page<RestauranteResponseDTO> restaurantes = restauranteService.listarAtivos(pageable.getPage(), pageable.getSize());
+
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentRequest().build().getPath();
+        PagedResponse<RestauranteResponseDTO> response = new PagedResponse<>(restaurantes, baseUrl);
 
         return ResponseEntity.ok(response);
     }

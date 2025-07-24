@@ -17,7 +17,7 @@ public class PagedResponse<T> {
 
   private PageLinks links;
 
-  public PagedResponse(Page<T> page) {
+  public PagedResponse(Page<T> page, String baseUrl) {
     this.content = page.getContent();
     this.page = new PageInfo(
         page.getNumber(),
@@ -26,7 +26,7 @@ public class PagedResponse<T> {
         page.getTotalPages(),
         page.isFirst(),
         page.isLast());
-    this.links = new PageLinks(page);
+    this.links = new PageLinks(page, baseUrl);
   }
 
   @Schema(description = "Informações de paginação")
@@ -99,8 +99,7 @@ public class PagedResponse<T> {
     @Schema(description = "Link para página anterior")
     private String prev;
 
-    public PageLinks(Page<?> page) {
-      String baseUrl = "/api";
+    public PageLinks(Page<?> page, String baseUrl) {
       this.first = baseUrl + "?page=0&size=" + page.getSize();
       this.last = baseUrl + "?page=" + (page.getTotalPages() - 1) + "&size=" + page.getSize();
 
