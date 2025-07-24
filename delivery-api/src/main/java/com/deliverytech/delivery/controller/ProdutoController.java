@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -129,6 +130,7 @@ public class ProdutoController {
             @ApiResponse(responseCode = "200", description = "Lista de produtos recuperada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Nenhum produto encontrado")
     })
+    @Cacheable("produtos")
     public ResponseEntity<List<ProdutoResponseDTO>> buscarTodosProdutos() {
         List<ProdutoResponseDTO> produtos = produtoService.buscarTodosProdutos();
         return ResponseEntity.ok(produtos);
