@@ -85,6 +85,31 @@ docker volume rm mysql_data
 ```
 
 ---
+## Usando Docker Compose
+
+Para subir todos os containers (aplicação e banco de dados) de uma só vez, utilize o comando abaixo no diretório onde está o arquivo `docker-compose.yml`:
+
+```sh
+docker-compose up --build -d
+```
+
+- O parâmetro `--build` garante que as imagens sejam reconstruídas caso haja alterações no código ou no Dockerfile.
+- O parâmetro `-d` executa os containers em segundo plano (modo "detached").
+
+Para visualizar os containers em execução:
+
+```sh
+docker-compose ps
+```
+
+Para parar e remover todos os containers, redes e volumes definidos no `docker-compose.yml`:
+
+```sh
+docker-compose down
+```
+
+---
+
 
 ## Referências
 
