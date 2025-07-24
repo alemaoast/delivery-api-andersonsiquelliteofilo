@@ -36,6 +36,7 @@ Sistema de delivery desenvolvido com Spring Boot e Java 21.
 - GET /health - Status da aplicação (inclui versão Java)
 - GET /info - Informações da aplicação
 - GET /h2-console - Console do banco H2
+- GET /actuator/metrics - Métricas detalhadas da aplicação (requer Spring Boot Actuator)
 
 ## 🔧 Configuração
 

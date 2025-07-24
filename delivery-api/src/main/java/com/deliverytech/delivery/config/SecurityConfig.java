@@ -34,7 +34,8 @@ public class SecurityConfig {
                             "/health", 
                             "/info", 
                             "/swagger-ui/**",
-                            "/api-docs/**").permitAll()
+                            "/api-docs/**",
+                            "/actuator/**").permitAll()
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
